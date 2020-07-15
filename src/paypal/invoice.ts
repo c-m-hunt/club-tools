@@ -19,66 +19,66 @@ export class Invoice extends PayPal {
   }
 
   generate = (
-    invoiceNumber: stringi,
-    reference: string,
+    options: InvoiceOptions
   ) => {
-
+    const templateInvoice: any = {
+      detail: {
+        invoice_number: "",
+        reference: "deal-ref",
+        invoice_date: "",
+        currency_code: GBP,
+        note: "Hope you had a good game!",
+        payment_term: {
+          due_date: "",
+        }
+      },
+      primary_recipients: [
+        {
+          billing_info: {
+            name: {
+              given_name: "Stephanie",
+              surname: "Meyers"
+            },
+            email_address: "bill-me@example.com"
+          }
+        }
+      ],
+      items: [
+        {
+          name: "Match Fees",
+          description: "July 11th, Benfleet 3s home",
+          quantity: 1,
+          unit_amount: {
+            currency_code: "GBP",
+            value: 10.00
+          },
+          unit_of_measure: "QUANTITY"
+        }
+      ]
+    };
   }
 }
 
 interface InvoiceOptions {
-  invoiceNumber: string;
+  invoiceNumber?: string;
   reference: string;
   note: string;
   dueDate: Date;
-  name: string;
+  recipient: {
+    name: string;
+    emailAddress: string;
+  };
+  fees: MatchFee[];
 }
 
+interface MatchFee {
+  name: string;
+  description: string;
+  type: MatchFeeType;
+}
 
 interface MatchFeeType {
-  
+  description: string;
+  value: number;
+  currency: "GBP";
 }
-
-const templateInvoice: any = {
-  detail: {
-    invoice_number: "",
-    reference: "deal-ref",
-    invoice_date: "",
-    currency_code: GBP,
-    note: "Hope you had a good game!",
-    payment_term: {
-      due_date: "",
-    }
-  },
-  primary_recipients: [
-    {
-      billing_info: {
-        name: {
-          given_name: "Stephanie",
-          surname: "Meyers"
-        },
-        email_address: "bill-me@example.com"
-      }
-    }
-  ],
-  items: [
-    {
-      name: "Match Fees",
-      description: "July 11th, Benfleet 3s home",
-      quantity: 1,
-      unit_amount: {
-        currency_code: "GBP",
-        value: 10.00
-      },
-      unit_of_measure: "QUANTITY"
-    }
-  ],
-  configuration: {
-    partial_payment: {
-      allow_partial_payment: false
-    },
-    allow_tip: true,
-    tax_calculated_after_discount: true,
-    tax_inclusive: false,
-  }
-};
