@@ -2,14 +2,19 @@ import logger from "./util/logger";
 
 import { Invoice } from "./paypal/invoice";
 
+const clientId = "";
+const secret = "";
+const inv = new Invoice(clientId, secret, true);
 
-const accessToken = "";
+inv.authenticate()
+  .then(() => {
+    inv.list()
+      .then(data => {
+        console.log(data);
+      });
+  });
 
-const inv = new Invoice(accessToken, true);
-
-
-
-//inv.generateNextInvoiceNumber();
+//
 
 const invData = {
   "detail": {
@@ -59,14 +64,14 @@ const invData = {
 
 
 
-inv.create(invData)
-  .then(data => {
-    console.log(data);
-    // inv.send(data["invoice_number"])
-    //   .then(data => {
-    //     console.log(data);
-    //   });
-  });
+// inv.create(invData)
+//   .then(data => {
+//     console.log(data);
+//     // inv.send(data["invoice_number"])
+//     //   .then(data => {
+//     //     console.log(data);
+//     //   });
+//   });
 
 // inv.list()
 //   .then(data => {
