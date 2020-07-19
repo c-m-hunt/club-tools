@@ -38,3 +38,5 @@ Thumbs.db
 dist/**/*
 
 notes.txt
+
+.env*
