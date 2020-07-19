@@ -1,7 +1,7 @@
 import { PayPal } from "./index";
 import moment from "moment";
+import { MatchFee } from "./../feeTypes";
 
-const currency = "GBP";
 export class Invoice extends PayPal {
 
   generateNextInvoiceNumber = async () => {
@@ -20,13 +20,23 @@ export class Invoice extends PayPal {
     return await this.request("/invoicing/invoices");
   }
 
+  detail = async(invoiceId: string) => {
+    return await this.request(`/invoicing/invoices/${invoiceId}`);
+  }
+
+  delete = async(invoiceId: string) => {
+    return await this.request(`/invoicing/invoices/${invoiceId}`, "DELETE", null, null, null, false);
+  }
+
+  listTemplates = async () => {
+    return await this.request("/invoicing/templates");
+  }
+
   generate = async (
     options: InvoiceOptions
   ) => {
-    const invoiceNumber = options.invoiceNumber || await this.generateNextInvoiceNumber();
     const templateInvoice: any = {
       detail: {
-        invoice_number: invoiceNumber,
         reference: options.reference,
         invoice_date: moment().format("YYYY-MM-DD"),
         currency_code: options.currency,
@@ -35,31 +45,41 @@ export class Invoice extends PayPal {
           due_date: moment(options.dueDate).format("YYYY-MM-DD"),
         }
       },
+      invoicer: {
+        business_name: options.invoicer.companyName,
+        name: {
+          full_name: options.invoicer.name
+        },
+        email_address: options.invoicer.email,
+        logo_url: options.invoicer.logo
+      },
       primary_recipients: [
         {
           billing_info: {
-            name: options.recipient.name,
+            full_name: options.recipient.name,
             email_address: options.recipient.emailAddress
           }
         }
       ],
       items: options.fees.map(fee => ({
         name: fee.name,
-        description: fee.description,
+        description: `${fee.type.description} - ${fee.description}`,
         quantity: 1,
         unit_amount: {
-          currency_code: fee.type.currency,
+          currency_code: options.currency,
           value: fee.type.value
         },
-        unit_of_measure: "QUANTITY"
-      }))
+        unit_of_measure: "AMOUNT"
+      })),
     };
+
+    return await this.create(templateInvoice);
   }
 }
 
 interface InvoiceOptions {
   invoiceNumber?: string;
-  reference: string;
+  reference?: string;
   note: string;
   dueDate: Date;
   currency: "GBP";
@@ -67,17 +87,11 @@ interface InvoiceOptions {
     name: string;
     emailAddress: string;
   };
+  invoicer: {
+    companyName: string;
+    name: string;
+    email: string;
+    logo: string;
+  };
   fees: MatchFee[];
-}
-
-interface MatchFee {
-  name: string;
-  description: string;
-  type: MatchFeeType;
-}
-
-interface MatchFeeType {
-  description: string;
-  value: number;
-  currency: "GBP";
 }

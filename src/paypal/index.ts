@@ -1,9 +1,10 @@
 import fetch from "node-fetch";
 import { base64Encode } from "./../util/utils";
+import logger from "./../logger";
 const BASE_URL = "https://api.paypal.com";
 const SANDBOX_BASE_URL = "https://api.sandbox.paypal.com";
 
-type RequestMethod = "GET" | "POST"
+type RequestMethod = "GET" | "POST" | "DELETE"
 interface RequestOptions {
   method: RequestMethod;
   headers: any;
@@ -30,7 +31,6 @@ export class PayPal {
       "Accept-Language": "en_GB",
       Authorization: `Basic ${base64Encode(`${this.clientID}:${this.secret}`)}`,
     };
-    this.version = "v1";
 
     const options: RequestOptions = {
       method: "POST",
@@ -48,7 +48,7 @@ export class PayPal {
     }
   }
 
-  request = async (url: string, method: RequestMethod = "GET", data: object | null = null, headers: object | null = null, body: object | string = null) => {
+  request = async (url: string, method: RequestMethod = "GET", data: object | null = null, headers: object | null = null, body: object | string = null, expectJson = true) => {
 
     headers = headers || {
       "Content-Type": "application/json",
@@ -63,11 +63,20 @@ export class PayPal {
     if (data) {
       options.body = JSON.stringify(data);
     }
+    console.log(`${this.baseUrl}/${this.version}${url}`);
     const response = await fetch(
       `${this.baseUrl}/${this.version}${url}`,
       options
     );
-    return await response.json();
+
+    logger.info(`Status code ${response.status}`);
+
+    if (expectJson) {
+      return await response.json();
+    } else {
+      return await response.text();
+    }
+    
   }
 
 }
