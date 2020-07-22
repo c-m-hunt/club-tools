@@ -1,7 +1,7 @@
 {
-    "name": "club-subs",
+    "name": "club-tools",
     "version": "0.1.0",
-    "description": "Collects club subs",
+    "description": "Club tools",
     "repository": {
         "type": "git",
         "url": "https://github.com/Microsoft/TypeScript-Node-Starter"

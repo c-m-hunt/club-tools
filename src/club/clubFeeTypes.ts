@@ -1,4 +1,4 @@
-import { GBP } from "./consts";
+import { GBP } from "../consts";
 
 export const feeTypes = {
     A: {

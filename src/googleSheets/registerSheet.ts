@@ -1,5 +1,5 @@
 import { GoogleSpreadsheetWorksheet } from "google-spreadsheet";
-import { MatchPlayer } from "../feeTypes";
+import { MatchPlayer } from "../club/feeTypes";
 import moment from "moment";
 
 export interface Player {
