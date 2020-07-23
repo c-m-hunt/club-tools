@@ -5,7 +5,7 @@ import { getDoc, getSheetByTitle } from "./../googleSheets/sheets";
 import { getRegisterFromSheet } from "./../googleSheets/registerSheet";
 import { GBP } from "./../consts";
 import { MatchPlayer, FeeTypes } from "./feeTypes";
-import { feeTypes } from "././clubFeeTypes";
+import { config } from "./../config";
 
 const clientId = process.env["PAYPAL_CLIENT_ID"];
 const secret = process.env["PAYPAL_SECRET"];
@@ -15,48 +15,50 @@ const invoicerContactName = process.env["PAYPAL_INVOICER_CONTACT"];
 const invoicerEmail = process.env["PAYPAL_INVOICER_EMAIL"];
 const invoicerLogo = process.env["PAYPAL_INVOICER_LOGO"];
 
+const feeTypes = config.fees.feeTypes;
+
 const sendInvoices = async (players: MatchPlayer[]) => {
   const inv = new Invoice(clientId, secret, sandbox);
   await inv.authenticate();
-  
+
   const player = players[2];
 
   //for (const player of players) {
-    console.log(player);
-    //@ts-ignore
-    const fee: FeeType = feeTypes[player.feeType];
-    console.log(fee);
+  console.log(player);
+  //@ts-ignore
+  const fee: FeeType = feeTypes[player.feeType];
+  console.log(fee);
 
-    let note = "If you have any queries over the amount you've been charged, please contact us. ";
+  let note = "If you have any queries over the amount you've been charged, please contact us. ";
 
-    if (fee.value == 0) {
-      note += `
+  if (fee.value == 0) {
+    note += `
 *** There is no balance on this invoice so no action is required by you. ***`;
-    }
+  }
 
-    const response = await inv.generate({
-      // reference: "Test",
-      dueDate: moment().add(14, "days").toDate(),
-      note,
-      currency: GBP,
-      recipient: {
-        name: player.name,
-        emailAddress: player.email
-      },
-      invoicer: {
-        companyName: invoicerCompany,
-        name: invoicerContactName,
-        email: invoicerEmail,
-        logo: invoicerLogo
-      },
-      fees: [{
-        name: player.name,
-        date: new Date(),
-        description: player.match,
-        type: fee
-      }]
-    });
-    console.log(response);
+  const response = await inv.generate({
+    // reference: "Test",
+    dueDate: moment().add(14, "days").toDate(),
+    note,
+    currency: GBP,
+    recipient: {
+      name: player.name,
+      emailAddress: player.email
+    },
+    invoicer: {
+      companyName: invoicerCompany,
+      name: invoicerContactName,
+      email: invoicerEmail,
+      logo: invoicerLogo
+    },
+    fees: [{
+      name: player.name,
+      date: new Date(),
+      description: player.match,
+      type: fee
+    }]
+  });
+  console.log(response);
   //}
 };
 

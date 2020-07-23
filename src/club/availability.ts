@@ -1,5 +1,6 @@
 import { getDoc as getDocAsync, getSheetByTitle } from "./../googleSheets/sheets";
 import { GoogleSpreadsheet } from "google-spreadsheet";
+import { Sheet } from "./../config";
 
 let doc: null | GoogleSpreadsheet = null;
 const getDoc = async (docId: string) => {
@@ -10,9 +11,9 @@ const getDoc = async (docId: string) => {
     return doc;
 };
 
-export const getAvailability = async (spreadsheetID: string, tabName: string) => {
-    const doc = await getDoc(spreadsheetID);
-    const sheet = await getSheetByTitle(tabName, doc);
+export const getAvailability = async (sheetLocation: Sheet) => {
+    const doc = await getDoc(sheetLocation.sheetId);
+    const sheet = await getSheetByTitle(sheetLocation.tabName, doc);
     const rows = await sheet.getRows();
     const data = rows.map(r => ({
         name: r._rawData[1],
