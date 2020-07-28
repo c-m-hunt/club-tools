@@ -4,6 +4,8 @@ import { getAvailability } from "./club/availability";
 import { sendToSlack } from "./lib/slack";
 import { invoicesList } from "./lib/slack/messageCreator";
 
+import { Client } from "play-cricket-client";
+
 import { program } from "commander";
 import { config } from "./config";
 import logger from "./logger";
@@ -33,6 +35,14 @@ async function main() {
             logger.info("Posting unpiad invoice list to Slack");
             await sendToSlack(invoicesList("Unpaid invoices", invoices));
         });
+
+    // program
+    //     .command("leaguetable")
+    //     .action(async () => {
+    //         const client = new Client(config.cricket.playCricket.apiKey);
+    //         const div = await client.getLeagueTable(92794);
+    //         console.log(div);
+    //     });
 
     await program.parseAsync(process.argv);
 }

@@ -4,14 +4,15 @@
     "description": "Club tools",
     "repository": {
         "type": "git",
-        "url": "https://github.com/Microsoft/TypeScript-Node-Starter"
+        "url": "https://github.com/c-m-hunt/club-tools"
     },
     "author": "Chris Hunt",
     "license": "MIT",
     "scripts": {
         "start": "ts-node src/app.ts",
+        "start-server": "ts-node src/slack.ts",
+        "start-server-watch": "nodemon",
         "lint": "tsc --noEmit && eslint \"**/*.{js,ts}\" --quiet --fix",
-        "serve-debug": "nodemon --inspect src/app.js",
         "test": "jest --forceExit --coverage --verbose"
     },
     "dependencies": {
@@ -21,10 +22,12 @@
         "commander": "^6.0.0",
         "dotenv": "^8.2.0",
         "errorhandler": "^1.5.1",
+        "express": "^4.17.1",
         "google-spreadsheet": "^3.0.11",
         "moment": "^2.27.0",
         "node-fetch": "^2.6.0",
         "paypal-rest-sdk": "^1.8.1",
+        "play-cricket-client": "^0.1.10",
         "winston": "^3.3.3"
     },
     "devDependencies": {

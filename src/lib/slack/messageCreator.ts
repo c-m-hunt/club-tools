@@ -7,6 +7,8 @@ const formatDate = (date: string): string => {
 
 export const invoicesList = (title: string, invoices: any) => {
     const message: any = {
+        replace_original: "true",
+        response_type: "in_channel",
         blocks: [
             {
                 type: "section",

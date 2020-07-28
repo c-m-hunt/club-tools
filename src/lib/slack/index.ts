@@ -1,9 +1,7 @@
 import { IncomingWebhook } from "@slack/webhook";
 import { config } from "../../config";
 
-const url = config.fees.slackWebhookUrl;
-
-export const sendToSlack = async (obj: object) => {
+export const sendToSlack = async (obj: object, url: string = config.fees.slackWebhookUrl) => {
     const webhook = new IncomingWebhook(url);
     await webhook.send(obj);
 };

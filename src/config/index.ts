@@ -35,6 +35,16 @@ export const config: Config = {
             }
 
         }
+    },
+    cricket: {
+        playCricket: {
+            apiKey: process.env["PLAY_CRICKET_API_KEY"]
+        }
+    },
+    communication: {
+        slack: {
+            commandToken: process.env["SLACK_COMMAND_TOKEN"]
+        }
     }
 };
 

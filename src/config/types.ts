@@ -36,4 +36,14 @@ export interface Config {
         slackWebhookUrl: string;
         invoiceParams: PayPalInvoiceParams;
     };
+    cricket: {
+        playCricket: {
+            apiKey: string;
+        };
+    };
+    communication: {
+        slack: {
+            commandToken: string;
+        }
+    }
 }
