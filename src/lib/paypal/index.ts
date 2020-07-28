@@ -1,6 +1,7 @@
 import fetch from "node-fetch";
 import { base64Encode } from "./../../util/utils";
 import logger from "./../../logger";
+
 const BASE_URL = "https://api.paypal.com";
 const SANDBOX_BASE_URL = "https://api.sandbox.paypal.com";
 
@@ -12,7 +13,6 @@ interface RequestOptions {
 }
 
 export class PayPal {
-
   baseUrl: string;
   accessToken: string = null;
   clientID: string;
@@ -63,7 +63,9 @@ export class PayPal {
     if (data) {
       options.body = JSON.stringify(data);
     }
-    console.log(`${this.baseUrl}/${this.version}${url}`);
+
+    logger.debug(`${this.baseUrl}/${this.version}${url}`);
+
     const response = await fetch(
       `${this.baseUrl}/${this.version}${url}`,
       options
@@ -76,9 +78,7 @@ export class PayPal {
     } else {
       return await response.text();
     }
-
   }
-
 }
 
 

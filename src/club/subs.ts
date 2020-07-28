@@ -7,6 +7,8 @@ import { GBP } from "./../consts";
 import { MatchPlayer, MatchFeeType } from "./feeTypes";
 import { config } from "./../config";
 
+import logger from "./../logger";
+
 const feeTypes = config.fees.feeTypes;
 
 const { clientId, secret, sandbox, invoiceer } = config.fees.invoiceParams;
@@ -15,9 +17,9 @@ const sendInvoices = async (players: MatchPlayer[], sendZeroInvoices: boolean = 
   const inv = new Invoice(clientId, secret, sandbox);
   await inv.authenticate();
   for (const player of players) {
-    console.log(player);
+    logger.debug(player);
     const fee: MatchFeeType = feeTypes[player.feeType];
-    console.log(fee);
+    logger.debug(fee);
 
     let note = "If you have any queries over the amount you've been charged, please contact us. ";
 
@@ -52,11 +54,12 @@ const sendInvoices = async (players: MatchPlayer[], sendZeroInvoices: boolean = 
       }]
     };
     if (dryRun) {
-      console.log("Dry run. Would send:");
-      console.log(invObj);
+      logger.info("Dry run. Would send:");
+      logger.info(invObj);
     } else {
       const response = await inv.generate(invObj);
-      console.log(response);
+      logger.info(`Invoice sent to ${player.name}`);
+      logger.debug(response);
     }
   }
 };
@@ -106,8 +109,11 @@ export const produceInvoices = async (dryRun: boolean = false) => {
 };
 
 export const owedInvoices = async () => {
+  logger.info("Authorising with PayPal");
   const inv = new Invoice(clientId, secret, sandbox);
   await inv.authenticate();
+  logger.info("Authorised. Getting unpaid invoices");
   const invoices = await inv.search({ status: ["SENT"] });
-  return invoices;
+  logger.info(`Found ${invoices.items.length}`);
+  return invoices.items;
 };

@@ -12,7 +12,7 @@ export const invoicesList = (title: string, invoices: any) => {
             }
         ]
     };
-    for (const i of invoices.items) {
+    for (const i of invoices) {
         message.blocks[0].text.text += `*${i.detail.invoice_number}* - ${i.detail.invoice_date} - ${i.amount.currency_code} ${i.amount.value} - ${i.primary_recipients[0].billing_info.email_address}
 `;
     }

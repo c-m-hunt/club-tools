@@ -28,9 +28,9 @@ async function main() {
 
     program
         .command("owing")
-        .action(async (cmd) => {
+        .action(async () => {
             const invoices = await owedInvoices();
-
+            logger.info("Posting unpiad invoice list to Slack");
             await sendToSlack(invoicesList(`Unpaid invoices at ${new Date().toLocaleDateString("en-GB")}`, invoices));
         });
 
