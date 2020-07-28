@@ -1,26 +1,19 @@
 import moment from "moment";
 
-import { Invoice } from "./../paypal/invoice";
-import { getDoc, getSheetByTitle } from "./../googleSheets/sheets";
-import { getRegisterFromSheet } from "./../googleSheets/registerSheet";
+import { Invoice, InvoiceOptions } from "./../lib/paypal/invoice";
+import { getDoc, getSheetByTitle } from "./../lib/googleSheets/sheets";
+import { getRegisterFromSheet } from "./../lib/googleSheets/registerSheet";
 import { GBP } from "./../consts";
 import { MatchPlayer, MatchFeeType } from "./feeTypes";
 import { config } from "./../config";
 
-const clientId = process.env["PAYPAL_CLIENT_ID"];
-const secret = process.env["PAYPAL_SECRET"];
-const sandbox = process.env["PAYPAL_SANDBOX"] == "1";
-const invoicerCompany = process.env["PAYPAL_INVOICER_BUSINESS"];
-const invoicerContactName = process.env["PAYPAL_INVOICER_CONTACT"];
-const invoicerEmail = process.env["PAYPAL_INVOICER_EMAIL"];
-const invoicerLogo = process.env["PAYPAL_INVOICER_LOGO"];
-
 const feeTypes = config.fees.feeTypes;
 
-const sendInvoices = async (players: MatchPlayer[]) => {
+const { clientId, secret, sandbox, invoiceer } = config.fees.invoiceParams;
+
+const sendInvoices = async (players: MatchPlayer[], sendZeroInvoices: boolean = true, dryRun: boolean = false) => {
   const inv = new Invoice(clientId, secret, sandbox);
   await inv.authenticate();
-
   for (const player of players) {
     console.log(player);
     const fee: MatchFeeType = feeTypes[player.feeType];
@@ -29,11 +22,15 @@ const sendInvoices = async (players: MatchPlayer[]) => {
     let note = "If you have any queries over the amount you've been charged, please contact us. ";
 
     if (fee.value == 0) {
-      note += `
-  *** There is no balance on this invoice so no action is required by you. ***`;
+      if (sendZeroInvoices) {
+        note += `
+        *** There is no balance on this invoice so no action is required by you. ***`;
+      } else {
+        console.log("Zero fee - not sending");
+        continue;
+      }
     }
-
-    const response = await inv.generate({
+    const invObj: InvoiceOptions = {
       dueDate: moment().add(14, "days").toDate(),
       note,
       currency: GBP,
@@ -42,10 +39,10 @@ const sendInvoices = async (players: MatchPlayer[]) => {
         emailAddress: player.email
       },
       invoicer: {
-        companyName: invoicerCompany,
-        name: invoicerContactName,
-        email: invoicerEmail,
-        logo: invoicerLogo
+        companyName: invoiceer.company,
+        name: invoiceer.contactName,
+        email: invoiceer.email,
+        logo: invoiceer.logo
       },
       fees: [{
         name: player.name,
@@ -53,23 +50,24 @@ const sendInvoices = async (players: MatchPlayer[]) => {
         description: player.match,
         type: fee
       }]
-    });
-    console.log(response);
+    };
+    if (dryRun) {
+      console.log("Dry run. Would send:");
+      console.log(invObj);
+    } else {
+      const response = await inv.generate(invObj);
+      console.log(response);
+    }
   }
 };
 
 const getRegister = async () => {
-  const sheetId = process.env.SHEET_ID;
-  const tabName = process.env.TAB_NAME;
+  const sheetId = config.register.sheet.sheetId;
+  const tabName = config.register.sheet.tabName;
   const doc = await getDoc(sheetId);
   const sheet = await getSheetByTitle(tabName, doc);
   const players = await getRegisterFromSheet(sheet);
   return players;
-};
-
-export const produceInvoices = async () => {
-  const players = await getRegister();
-  await sendInvoices(players);
 };
 
 const listTemplates = async () => {
@@ -102,3 +100,14 @@ const deleteInvoice = async (invoiceId: string) => {
   console.log(invoice);
 };
 
+export const produceInvoices = async (dryRun: boolean = false) => {
+  const players = await getRegister();
+  await sendInvoices(players, config.fees.sendZeroInvoices, dryRun);
+};
+
+export const owedInvoices = async () => {
+  const inv = new Invoice(clientId, secret, sandbox);
+  await inv.authenticate();
+  const invoices = await inv.search({ status: ["SENT"] });
+  return invoices;
+};

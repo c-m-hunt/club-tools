@@ -1,6 +1,6 @@
 import { PayPal } from "./index";
 import moment from "moment";
-import { MatchFee } from "../club/feeTypes";
+import { MatchFee } from "../../club/feeTypes";
 
 export class Invoice extends PayPal {
 
@@ -16,15 +16,19 @@ export class Invoice extends PayPal {
     return await this.request(`/invoicing/invoices/${invId}/send`, "POST");
   }
 
-  list = async() => {
+  list = async () => {
     return await this.request("/invoicing/invoices");
   }
 
-  detail = async(invoiceId: string) => {
+  search = async (searchCritera: object) => {
+    return await this.request("/invoicing/search-invoices", "POST", searchCritera);
+  }
+
+  detail = async (invoiceId: string) => {
     return await this.request(`/invoicing/invoices/${invoiceId}`);
   }
 
-  delete = async(invoiceId: string) => {
+  delete = async (invoiceId: string) => {
     return await this.request(`/invoicing/invoices/${invoiceId}`, "DELETE", null, null, null, false);
   }
 
@@ -77,7 +81,7 @@ export class Invoice extends PayPal {
   }
 }
 
-interface InvoiceOptions {
+export interface InvoiceOptions {
   invoiceNumber?: string;
   reference?: string;
   note: string;

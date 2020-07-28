@@ -15,6 +15,7 @@
         "test": "jest --forceExit --coverage --verbose"
     },
     "dependencies": {
+        "@slack/webhook": "^5.0.3",
         "@types/google-spreadsheet": "^3.0.0",
         "@types/node-fetch": "^2.5.7",
         "commander": "^6.0.0",

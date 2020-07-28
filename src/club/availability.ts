@@ -1,4 +1,4 @@
-import { getDoc as getDocAsync, getSheetByTitle } from "./../googleSheets/sheets";
+import { getDoc as getDocAsync, getSheetByTitle } from "./../lib/googleSheets/sheets";
 import { GoogleSpreadsheet } from "google-spreadsheet";
 import { Sheet } from "./../config";
 
@@ -11,11 +11,18 @@ const getDoc = async (docId: string) => {
     return doc;
 };
 
-export const getAvailability = async (sheetLocation: Sheet) => {
+export interface Availability {
+    name: string;
+    availability: string[];
+    transport: string;
+    comments: string;
+}
+
+export const getAvailability = async (sheetLocation: Sheet): Promise<Availability[]> => {
     const doc = await getDoc(sheetLocation.sheetId);
     const sheet = await getSheetByTitle(sheetLocation.tabName, doc);
     const rows = await sheet.getRows();
-    const data = rows.map(r => ({
+    const data = rows.map((r: any) => ({
         name: r._rawData[1],
         availability: r._rawData[2].split(",").map((a: string) => a.trim()),
         transport: r._rawData[3],

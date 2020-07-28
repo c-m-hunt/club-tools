@@ -1,4 +1,4 @@
-import logger from "../logger";
+import logger from "../../logger";
 import fs from "fs";
 import path from "path";
 import os from "os";
@@ -9,7 +9,7 @@ export const getCreds = (): string => {
   logger.debug("Trying to find key at env var KEY_PATH");
   let keyPath = process.env["KEY_PATH"];
   if (!keyPath || !fs.existsSync(keyPath)) {
-    keyPath = path.resolve(path.join(".","privatekey.json"));
+    keyPath = path.resolve(path.join(".", "privatekey.json"));
     logger.debug(`Trying key in this directory - ${keyPath}`);
   }
   if (!fs.existsSync(keyPath)) {
