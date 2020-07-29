@@ -30,13 +30,13 @@ async function main() {
             await produceInvoices(cmd.dryrun);
         });
 
-    program
-        .command("owing")
-        .action(async () => {
-            const invoices = await owedInvoices();
-            logger.info("Posting unpiad invoice list to Slack");
-            await sendToSlack(invoicesList("Unpaid invoices", invoices));
-        });
+    // program
+    //     .command("owing")
+    //     .action(async () => {
+    //         const invoices = await owedInvoices();
+    //         logger.info("Posting unpiad invoice list to Slack");
+    //         await sendToSlack(invoicesList("Unpaid invoices", invoices));
+    //     });
 
     // program
     //     .command("leaguetable")

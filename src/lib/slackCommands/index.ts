@@ -98,7 +98,11 @@ export const slackCommandHander = (text: string, res: Response, responseUrl: str
         const command = textParts[0];
         if (Object.keys(commands).includes(command)) {
             const cls = new commands[command as Command](text, responseUrl);
-            res.send(cls.requestConfirmation);
+            if (cls.requestConfirmation.length > 0) {
+                res.send(cls.requestConfirmation);
+            } else {
+                res.status(200).end();
+            }
         } else {
             res.send(`Unknown command. Try one of \`${Object.keys(commands).join(", ")}\``);
         }

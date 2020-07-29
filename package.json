@@ -13,7 +13,8 @@
         "start-server": "ts-node src/slack.ts",
         "start-server-watch": "nodemon",
         "lint": "tsc --noEmit && eslint \"**/*.{js,ts}\" --quiet --fix",
-        "test": "jest --forceExit --coverage --verbose"
+        "test": "jest --forceExit --coverage --verbose",
+        "build": "tsc -p ."
     },
     "dependencies": {
         "@slack/webhook": "^5.0.3",
