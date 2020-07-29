@@ -24,6 +24,7 @@
         "errorhandler": "^1.5.1",
         "express": "^4.17.1",
         "google-spreadsheet": "^3.0.11",
+        "mailchimp-api-v3": "^1.14.0",
         "moment": "^2.27.0",
         "node-fetch": "^2.6.0",
         "paypal-rest-sdk": "^1.8.1",

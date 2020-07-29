@@ -44,6 +44,9 @@ export const config: Config = {
     communication: {
         slack: {
             commandToken: process.env["SLACK_COMMAND_TOKEN"]
+        },
+        mailchimp: {
+            apiKey: process.env["MAILCHIMP_API_KEY"]
         }
     }
 };

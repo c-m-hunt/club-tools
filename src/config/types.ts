@@ -44,6 +44,9 @@ export interface Config {
     communication: {
         slack: {
             commandToken: string;
-        }
-    }
+        };
+        mailchimp: {
+            apiKey: string;
+        };
+    };
 }
