@@ -6,7 +6,7 @@ import { invoicesList } from "./lib/slackCommands/messageCreator";
 
 import { Client } from "play-cricket-client";
 
-import { searchMembers } from "./club/members";
+import { searchMembers } from "./club/mailingList/mailchimp";
 
 import { program } from "commander";
 import { config } from "./config";

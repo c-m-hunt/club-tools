@@ -1,5 +1,5 @@
 import moment from "moment";
-import { ClubMember } from "../../club/members";
+import { ClubMember } from "../../club/mailingList/mailchimp";
 
 
 const formatDate = (date: string): string => {

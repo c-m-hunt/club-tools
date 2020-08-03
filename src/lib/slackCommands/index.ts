@@ -3,7 +3,7 @@ import logger from "./../../logger";
 import { owedInvoices } from "./../../club/subs";
 import { sendToSlack } from "../slack";
 import { invoicesList, memberList } from "./messageCreator";
-import { searchMembers } from "../../club/members";
+import { searchMembers } from "../../club/mailingList/mailchimp";
 
 type SubCommand = {
     commandFn: (text?: string) => Promise<void>;
