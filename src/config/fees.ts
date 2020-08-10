@@ -32,4 +32,9 @@ export const feeTypes: FeeTypes = {
         value: 5,
         currency: GBP
     },
+    C: {
+        description: "Complementary",
+        value: 0,
+        currency: GBP
+    }
 };

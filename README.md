@@ -22,6 +22,7 @@ These are generated from contact forms at the moment.
   * `Y` - Youth
 * Run `yarn start sendinvoices -d` to do a dry run and check output
 * Run `yarn start sendinvoices` to create draft invoices
+* Run `yarn start sendinvoices -s` to create and send invoices
 * Check PayPal UI and send invoices
 * In spreadsheet, move players from `To invoice` tab to `Historical register` tab
 
