@@ -1,6 +1,6 @@
 import moment from "moment";
 
-import { Invoice, InvoiceOptions } from "./../lib/paypal/invoice";
+import { Invoice, InvoiceOptions, getInvoiceSingleton } from "./../lib/paypal/invoice";
 import { getDoc, getSheetByTitle } from "./../lib/googleSheets/sheets";
 import { getRegisterFromSheet } from "./../lib/googleSheets/registerSheet";
 import { GBP } from "./../consts";
@@ -74,44 +74,43 @@ const getRegister = async () => {
 };
 
 const listTemplates = async () => {
-  const inv = new Invoice(clientId, secret, sandbox);
-  await inv.authenticate();
+  const inv = await getInvoiceSingleton(clientId, secret, sandbox);
   const templates = await inv.listTemplates();
   console.log(templates);
   console.log(templates.templates[3].settings);
 };
 
 const listInvoices = async () => {
-  const inv = new Invoice(clientId, secret, sandbox);
-  await inv.authenticate();
+  const inv = await getInvoiceSingleton(clientId, secret, sandbox);
   const invoices = await inv.list();
   console.log(invoices);
   console.log(invoices.items[0].detail);
 };
 
 const invoiceDetail = async (invoiceId: string) => {
-  const inv = new Invoice(clientId, secret, sandbox);
-  await inv.authenticate();
+  const inv = await getInvoiceSingleton(clientId, secret, sandbox);
   const invoice = await inv.detail(invoiceId);
   console.log(invoice);
 };
 
 const deleteInvoice = async (invoiceId: string) => {
-  const inv = new Invoice(clientId, secret, sandbox);
-  await inv.authenticate();
+  const inv = await getInvoiceSingleton(clientId, secret, sandbox);
   const invoice = await inv.delete(invoiceId);
   console.log(invoice);
 };
 
 export const produceInvoices = async (dryRun: boolean = false) => {
   const players = await getRegister();
-  await sendInvoices(players, config.fees.sendZeroInvoices, dryRun);
+  await createInvoices(players, config.fees.sendZeroInvoices, dryRun);
 };
+
+export const sendDraftInvoice = async (invoiceId: string) => {
+  const invoices = await
+}
 
 export const owedInvoices = async () => {
   logger.info("Authorising with PayPal");
-  const inv = new Invoice(clientId, secret, sandbox);
-  await inv.authenticate();
+  const inv = await getInvoiceSingleton(clientId, secret, sandbox);
   logger.info("Authorised. Getting unpaid invoices");
   const invoices = await inv.search({ status: ["SENT"] });
   logger.info(`Found ${invoices.items.length}`);

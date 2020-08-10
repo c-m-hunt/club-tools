@@ -17,7 +17,7 @@ export class PayPal {
   accessToken: string = null;
   clientID: string;
   secret: string;
-  version: string
+  version: string;
   constructor(clientId: string, secret: string, sandbox: boolean = false, version: string = "v2") {
     this.clientID = clientId;
     this.secret = secret;

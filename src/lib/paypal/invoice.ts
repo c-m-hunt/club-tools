@@ -3,7 +3,6 @@ import moment from "moment";
 import { MatchFee } from "../../club/feeTypes";
 
 export class Invoice extends PayPal {
-
   generateNextInvoiceNumber = async () => {
     return await this.request("/invoicing/generate-next-invoice-number", "POST");
   }
@@ -99,3 +98,16 @@ export interface InvoiceOptions {
   };
   fees: MatchFee[];
 }
+
+const invoices: { [key: string]: Invoice } = {};
+
+export const getInvoiceSingleton = async (clientId: string, secret: string, sandbox: boolean = false, version: string = "v2"): Promise<Invoice> => {
+  const key = `${clientId}${secret}${sandbox}${version}`;
+  if (key in invoices) {
+    return invoices[key];
+  }
+  const inv = new Invoice(clientId, secret, sandbox);
+  await inv.authenticate();
+  invoices[key] = inv;
+  return inv;
+};
