@@ -28,7 +28,7 @@ async function main() {
         .option("-d, --dryrun", "dry run for invoice sending")
         .option("-s --send", "will send the invoices. If not set, will only create draft")
         .action(async (cmd) => {
-            await produceInvoices(cmd.dryrun);
+            await produceInvoices(cmd.dryrun, cmd.send);
         });
 
     // program
