@@ -13,9 +13,8 @@ const feeTypes = config.fees.feeTypes;
 
 const { clientId, secret, sandbox, invoiceer } = config.fees.invoiceParams;
 
-const sendInvoices = async (players: MatchPlayer[], sendZeroInvoices: boolean = true, dryRun: boolean = false) => {
-  const inv = new Invoice(clientId, secret, sandbox);
-  await inv.authenticate();
+const createInvoices = async (players: MatchPlayer[], sendZeroInvoices: boolean = true, dryRun: boolean = false) => {
+  const inv = await getInvoiceSingleton(clientId, secret, sandbox);
   for (const player of players) {
     logger.debug(player);
     const fee: MatchFeeType = feeTypes[player.feeType];
