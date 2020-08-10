@@ -8,12 +8,20 @@ import { MatchPlayer, MatchFeeType } from "./feeTypes";
 import { config } from "./../config";
 
 import logger from "./../logger";
+import { create } from "domain";
 
 const feeTypes = config.fees.feeTypes;
 
 const { clientId, secret, sandbox, invoiceer } = config.fees.invoiceParams;
 
-const createInvoices = async (players: MatchPlayer[], sendZeroInvoices: boolean = true, dryRun: boolean = false) => {
+export const sendDraftInvoice = async (invoiceId: string) => {
+  const inv = await getInvoiceSingleton(clientId, secret, sandbox);
+  logger.debug(`Sending invoice ${invoiceId}`);
+  await inv.send(invoiceId);
+  logger.info(`Invoice ${invoiceId} sent`);
+};
+
+const createInvoices = async (players: MatchPlayer[], sendZeroInvoices: boolean = true, autoSend: boolean = false, dryRun: boolean = false) => {
   const inv = await getInvoiceSingleton(clientId, secret, sandbox);
   for (const player of players) {
     logger.debug(player);
@@ -59,6 +67,14 @@ const createInvoices = async (players: MatchPlayer[], sendZeroInvoices: boolean 
       const response = await inv.generate(invObj);
       logger.info(`Invoice sent to ${player.name}`);
       logger.debug(response);
+      logger.debug(JSON.stringify(response));
+      const responseHrefParts = response.href.split("/");
+      const createdId = responseHrefParts[responseHrefParts.length - 1];
+      logger.info(`${createdId} created`);
+      if (autoSend) {
+        await sendDraftInvoice(createdId);
+        logger.info(`${createdId} sent`);
+      }
     }
   }
 };
@@ -72,11 +88,10 @@ const getRegister = async () => {
   return players;
 };
 
-const listTemplates = async () => {
+const getTemplates = async () => {
   const inv = await getInvoiceSingleton(clientId, secret, sandbox);
   const templates = await inv.listTemplates();
-  console.log(templates);
-  console.log(templates.templates[3].settings);
+  return templates;
 };
 
 const listInvoices = async () => {
@@ -98,14 +113,18 @@ const deleteInvoice = async (invoiceId: string) => {
   console.log(invoice);
 };
 
-export const produceInvoices = async (dryRun: boolean = false) => {
+export const produceInvoices = async (dryRun: boolean = false, autoSend: boolean = true) => {
+  if (dryRun) {
+    logger.info("Running dry run - nothing will be created");
+  } else {
+    logger.info("THIS IS A LIVE RUN - INVOICES WILL BE CREATED");
+    if (autoSend) {
+      logger.info("AUTOSEND IS ON - INVOICES WILL AUTOMATICALLY BE SENT ONCE CREATED");
+    }
+  }
   const players = await getRegister();
-  await createInvoices(players, config.fees.sendZeroInvoices, dryRun);
+  await createInvoices(players, config.fees.sendZeroInvoices, autoSend, dryRun);
 };
-
-export const sendDraftInvoice = async (invoiceId: string) => {
-  const invoices = await
-}
 
 export const owedInvoices = async () => {
   logger.info("Authorising with PayPal");
