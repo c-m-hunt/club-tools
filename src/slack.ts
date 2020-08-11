@@ -1,8 +1,8 @@
 import express from "express";
 import bodyParser from "body-parser";
-import { config } from "./config";
-import logger from "./logger";
-import { slackCommandHander } from "./lib/slackCommands";
+import { config } from "config";
+import logger from "logger";
+import { slackCommandHander } from "lib/slackCommands";
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));

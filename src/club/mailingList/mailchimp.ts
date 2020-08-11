@@ -1,6 +1,6 @@
-import { config } from "../../config";
+import { config } from "config";
 import Mailchimp from "mailchimp-api-v3";
-import { Member } from "./../../lib/clubDb/types";
+import { Member } from "lib/clubDb/types";
 
 export const searchMembers = async (search: string): Promise<Member[]> => {
     const mailchimp = new Mailchimp(config.communication.mailchimp.apiKey);

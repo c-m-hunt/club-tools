@@ -1,5 +1,5 @@
 import { GoogleSpreadsheet } from "google-spreadsheet";
-import logger from "../../logger";
+import logger from "logger";
 import { getCreds } from "./serviceCreds";
 
 export const getDoc = async (id: string, creds?: string): Promise<GoogleSpreadsheet> => {

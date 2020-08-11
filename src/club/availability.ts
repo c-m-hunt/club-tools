@@ -1,6 +1,6 @@
-import { getDoc as getDocAsync, getSheetByTitle } from "./../lib/googleSheets/sheets";
+import { getDoc as getDocAsync, getSheetByTitle } from "lib/googleSheets/sheets";
 import { GoogleSpreadsheet } from "google-spreadsheet";
-import { Sheet } from "./../config";
+import { Sheet } from "config";
 
 let doc: null | GoogleSpreadsheet = null;
 const getDoc = async (docId: string) => {

@@ -1,5 +1,5 @@
 import moment from "moment";
-import { ClubMember } from "../../club/mailingList/mailchimp";
+import { Member } from "../clubDb/types";
 
 
 const formatDate = (date: string): string => {
@@ -40,7 +40,7 @@ export const invoicesList = (title: string, invoices: any) => {
 };
 
 
-export const memberList = (title: string, members: ClubMember[], inChannel: boolean = true) => {
+export const memberList = (title: string, members: Member[], inChannel: boolean = true) => {
     const message: any = {
         replace_original: "true",
         response_type: inChannel ? "in_channel" : "ephemeral",

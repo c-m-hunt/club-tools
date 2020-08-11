@@ -1,9 +1,9 @@
 import mongoose from "mongoose";
 import { Member } from "./types";
 
-import { config } from "./../../config";
+import { config } from "config";
 import { getModelForClass } from "@typegoose/typegoose";
-import logger from "./../../logger";
+import logger from "logger";
 
 const MemberModel = getModelForClass(Member);
 
@@ -16,4 +16,8 @@ export const insertMember = async (member: Member) => {
     // logger.debug("Inserted:");
     // logger.debug(JSON.stringify(createdMember, null, 2));
     return createdMember._id;
+};
+
+export const disconnect = async () => {
+    await mongoose.disconnect();
 };

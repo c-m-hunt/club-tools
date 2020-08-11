@@ -9,8 +9,8 @@
     "author": "Chris Hunt",
     "license": "MIT",
     "scripts": {
-        "start": "ts-node src/app.ts",
-        "start-server": "ts-node src/slack.ts",
+        "start": "NODE_PATH=./src ts-node src/app.ts",
+        "start-server": "NODE_PATH=./src ts-node src/slack.ts",
         "start-server-watch": "nodemon",
         "lint": "tsc --noEmit && eslint \"**/*.{js,ts}\" --quiet --fix",
         "test": "jest --forceExit --coverage --verbose",

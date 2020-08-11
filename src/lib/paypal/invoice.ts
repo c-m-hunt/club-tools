@@ -1,6 +1,6 @@
 import { PayPal } from "./index";
 import moment from "moment";
-import { MatchFee } from "../../club/feeTypes";
+import { MatchFee } from "club/feeTypes";
 
 export class Invoice extends PayPal {
   generateNextInvoiceNumber = async () => {

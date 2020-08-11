@@ -1,16 +1,17 @@
-import { produceInvoices, owedInvoices } from "./club/subs";
+import { produceInvoices, owedInvoices } from "club/subs";
 import { getAvailability } from "./club/availability";
 
-import { sendToSlack } from "./lib/slack";
-import { invoicesList } from "./lib/slackCommands/messageCreator";
+import { sendToSlack } from "lib/slack";
+import { invoicesList } from "lib/slackCommands/messageCreator";
 
 import { Client } from "play-cricket-client";
 
 import { searchMembers } from "./club/mailingList/mailchimp";
 
 import { program } from "commander";
-import { config } from "./config";
-import logger from "./logger";
+import { config } from "config";
+import logger from "logger";
+import { importMembers } from "club/members/import";
 
 program.version("0.1.0");
 async function main() {
@@ -46,6 +47,13 @@ async function main() {
     //         const div = await client.getLeagueTable(92794);
     //         console.log(div);
     //     });
+
+    program
+        .command("import")
+        .action(async () => {
+            const members = await importMembers();
+            console.log(members);
+        });
 
     program
         .command("searchmember")

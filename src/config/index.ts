@@ -4,7 +4,7 @@ import { feeTypes } from "./fees";
 
 export { FeeTypes, Config, Sheet } from "./types";
 
-dotenv.config({ path: "./.env.prod" });
+dotenv.config({ path: "./.env" });
 
 export const config: Config = {
     availability: {

@@ -1,28 +1,40 @@
 import { GoogleSpreadsheetWorksheet } from "google-spreadsheet";
-import moment from "moment";
-import { getAllMembers, searchMembers } from "../mailingList/mailchimp";
-import { Member } from "./../../lib/clubDb/types";
-import { connect, insertMember } from "./../../lib/clubDb";
-import logger from "./../../logger";
-import { config } from "./../../config";
+import { getAllMembers } from "../mailingList/mailchimp";
+import { Member } from "lib/clubDb/types";
+import { connect, disconnect, insertMember } from "lib/clubDb";
+import logger from "logger";
+import { config } from "config";
 
-const importMembers = async () => {
+export const importMembers = async () => {
     await connect();
     const members = await getAllMembers(config.communication.mailchimp.listId);
     const importedMembers = [];
     for (const m of members) {
         try {
-            importedMembers.push(await insertMember(m as Member));
+            importedMembers.push(insertMember(m as Member));
         } catch (ex) {
             logger.error("Failed to insert for:");
             logger.error(JSON.stringify(m, null, 2));
         }
-
     }
-    console.log(importedMembers);
+    const responses = await Promise.all(importedMembers);
+    disconnect();
+    return responses;
 };
 
-export const getContactFormResponses = async (sheet: GoogleSpreadsheetWorksheet): Promise<Member[]> => {
+export const exportToSpreadsheet = () => {
+
+};
+
+export const importFromSpreadsheet = () => {
+
+};
+
+export const updateDatabase = (members: Member[]) => {
+
+};
+
+export const getContactFormResponses = async (sheet: GoogleSpreadsheetWorksheet): Promise<object[]> => {
     const rows = await sheet.getRows({ offset: 0, limit: 50 });
     const contactForms = rows.map(row => {
         return {
@@ -35,5 +47,3 @@ export const getContactFormResponses = async (sheet: GoogleSpreadsheetWorksheet)
     });
     return contactForms;
 };
-
-importMembers();
