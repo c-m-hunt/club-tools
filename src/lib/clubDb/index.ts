@@ -18,6 +18,10 @@ export const insertMember = async (member: Member) => {
     return createdMember._id;
 };
 
+export const getMembers = async (): Promise<Member[]> => {
+    return await MemberModel.find({}).sort({ lastName: 1, firstName: 1 }).exec();
+};
+
 export const disconnect = async () => {
     await mongoose.disconnect();
 };

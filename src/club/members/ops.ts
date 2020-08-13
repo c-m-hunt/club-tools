@@ -1,7 +1,7 @@
 import { GoogleSpreadsheetWorksheet } from "google-spreadsheet";
 import { getAllMembers } from "../mailingList/mailchimp";
-import { Member } from "lib/clubDb/types";
-import { connect, disconnect, insertMember } from "lib/clubDb";
+import { Member, memberToSpreadsheetRow } from "lib/clubDb/types";
+import { connect, disconnect, insertMember, getMembers } from "lib/clubDb";
 import logger from "logger";
 import { config } from "config";
 
@@ -22,8 +22,15 @@ export const importMembers = async () => {
     return responses;
 };
 
-export const exportToSpreadsheet = () => {
-
+export const exportToSpreadsheet = async (sheet: GoogleSpreadsheetWorksheet) => {
+    connect();
+    await sheet.clear();
+    await sheet.setHeaderRow(["id", "firstName", "lastName", "email", "tags"]);
+    const members = await getMembers();
+    console.log(members);
+    const rows = members.map(m => memberToSpreadsheetRow(m));
+    await sheet.addRows(rows);
+    disconnect();
 };
 
 export const importFromSpreadsheet = () => {

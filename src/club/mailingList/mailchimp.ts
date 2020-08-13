@@ -26,9 +26,7 @@ export const getAllMembers = async (listId: string): Promise<Member[]> => {
         path: `/lists/${listId}/members?count=1000`,
     });
 
-    console.log(list.members);
-
-    return list.members
+    const members = list.members
         .filter((m: any) => m.status === "subscribed")
         .map((m: any) => (
             {
@@ -41,4 +39,5 @@ export const getAllMembers = async (listId: string): Promise<Member[]> => {
                 tags: m.tags.map((t: any) => t.name)
             }
         ));
+    return members;
 };

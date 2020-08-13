@@ -29,7 +29,7 @@ interface ClubDb {
 }
 
 export interface Config {
-    clubDb: ClubDb,
+    clubDb: ClubDb;
     availability: {
         sheet: Sheet;
     };

@@ -20,5 +20,13 @@ export class Member {
     @prop({ _id: false })
     externalMapping: ExternalMapping
     @prop()
-    tags?: string[]
+    tags?: string[];
 }
+
+export const memberToSpreadsheetRow = (m: any) => ({
+    id: (m as any)._id,
+    firstName: m.firstName,
+    lastName: m.lastName,
+    email: m.email,
+    tags: m.tags?.join(",")
+});

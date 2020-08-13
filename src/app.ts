@@ -11,7 +11,9 @@ import { searchMembers } from "./club/mailingList/mailchimp";
 import { program } from "commander";
 import { config } from "config";
 import logger from "logger";
-import { importMembers } from "club/members/import";
+import { importMembers, exportToSpreadsheet } from "club/members/ops";
+import { getDoc, getSheetByTitle } from "lib/googleSheets/sheets";
+import { getRegisterFromSheet } from "club/registerSheet";
 
 program.version("0.1.0");
 async function main() {
@@ -53,6 +55,16 @@ async function main() {
         .action(async () => {
             const members = await importMembers();
             console.log(members);
+        });
+
+    program
+        .command("export")
+        .action(async () => {
+            const sheetId = "1w7Zdc_87-sVAq5jT-XrmlSE62NDFsGMUlcuOwdV-XW8";
+            const tabName = "Members";
+            const doc = await getDoc(sheetId);
+            const sheet = await getSheetByTitle(tabName, doc);
+            await exportToSpreadsheet(sheet);
         });
 
     program
