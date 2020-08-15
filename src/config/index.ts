@@ -4,7 +4,7 @@ import { feeTypes } from "./fees";
 
 export { FeeTypes, Config, Sheet } from "./types";
 
-dotenv.config({ path: "./.env.prod" });
+dotenv.config({ path: "./.env" });
 
 export const config: Config = {
     availability: {
@@ -46,8 +46,13 @@ export const config: Config = {
             commandToken: process.env["SLACK_COMMAND_TOKEN"]
         },
         mailchimp: {
-            apiKey: process.env["MAILCHIMP_API_KEY"]
+            apiKey: process.env["MAILCHIMP_API_KEY"],
+            listId: process.env["MAILCHIMP_LIST_ID"]
         }
+    },
+    clubDb: {
+        connectionString: process.env["CLUB_DB_CONNECTION"],
+        dbName: process.env["CLUB_DB_NAME"]
     }
 };
 

@@ -1,14 +1,13 @@
 import moment from "moment";
 
-import { Invoice, InvoiceOptions, getInvoiceSingleton } from "./../lib/paypal/invoice";
-import { getDoc, getSheetByTitle } from "./../lib/googleSheets/sheets";
-import { getRegisterFromSheet } from "./../lib/googleSheets/registerSheet";
-import { GBP } from "./../consts";
+import { Invoice, InvoiceOptions, getInvoiceSingleton } from "lib/paypal/invoice";
+import { getDoc, getSheetByTitle } from "lib/googleSheets/sheets";
+import { getRegisterFromSheet } from "./registerSheet";
+import { GBP } from "consts";
 import { MatchPlayer, MatchFeeType } from "./feeTypes";
-import { config } from "./../config";
+import { config } from "config";
 
-import logger from "./../logger";
-import { create } from "domain";
+import logger from "logger";
 
 const feeTypes = config.fees.feeTypes;
 
@@ -62,7 +61,7 @@ const createInvoices = async (players: MatchPlayer[], sendZeroInvoices: boolean 
     };
     if (dryRun) {
       logger.info("Dry run. Would send:");
-      logger.info(invObj);
+      logger.info(JSON.stringify(invObj, null, 2));
     } else {
       const response = await inv.generate(invObj);
       logger.info(`Invoice sent to ${player.name}`);

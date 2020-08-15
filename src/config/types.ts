@@ -23,7 +23,13 @@ export interface PayPalInvoiceParams {
     };
 }
 
+interface ClubDb {
+    connectionString: string;
+    dbName: string;
+}
+
 export interface Config {
+    clubDb: ClubDb;
     availability: {
         sheet: Sheet;
     };
@@ -47,6 +53,7 @@ export interface Config {
         };
         mailchimp: {
             apiKey: string;
+            listId: string;
         };
     };
 } 

@@ -1,4 +1,4 @@
-import { GBP } from "./../consts";
+import { GBP } from "consts";
 import { FeeTypes } from "./types";
 
 export const feeTypes: FeeTypes = {

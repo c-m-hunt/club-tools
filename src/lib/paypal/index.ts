@@ -1,6 +1,6 @@
 import fetch from "node-fetch";
-import { base64Encode } from "./../../util/utils";
-import logger from "./../../logger";
+import { base64Encode } from "util/utils";
+import logger from "logger";
 
 const BASE_URL = "https://api.paypal.com";
 const SANDBOX_BASE_URL = "https://api.sandbox.paypal.com";

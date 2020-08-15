@@ -1,16 +1,21 @@
-import { produceInvoices, owedInvoices } from "./club/subs";
+import { produceInvoices, owedInvoices } from "club/subs";
 import { getAvailability } from "./club/availability";
 
-import { sendToSlack } from "./lib/slack";
-import { invoicesList } from "./lib/slackCommands/messageCreator";
+import { sendToSlack } from "lib/slack";
+import { invoicesList } from "lib/slackCommands/messageCreator";
 
 import { Client } from "play-cricket-client";
 
-import { searchMembers } from "./club/members";
+import { searchMembers } from "./club/mailingList/mailchimp";
 
 import { program } from "commander";
-import { config } from "./config";
-import logger from "./logger";
+import { config } from "config";
+import logger from "logger";
+import { importMembers, exportToSpreadsheet } from "club/members/ops";
+import { getDoc, getSheetByTitle } from "lib/googleSheets/sheets";
+import { getRegisterFromSheet } from "club/registerSheet";
+import { searchNames } from "lib/clubDb/search";
+import { connect, disconnect } from "lib/clubDb";
 
 program.version("0.1.0");
 async function main() {
@@ -48,10 +53,29 @@ async function main() {
     //     });
 
     program
-        .command("searchmember")
+        .command("import")
         .action(async () => {
-            const members = await searchMembers("hunt");
+            const members = await importMembers();
             console.log(members);
+        });
+
+    program
+        .command("export")
+        .action(async () => {
+            const sheetId = "1w7Zdc_87-sVAq5jT-XrmlSE62NDFsGMUlcuOwdV-XW8";
+            const tabName = "Members";
+            const doc = await getDoc(sheetId);
+            const sheet = await getSheetByTitle(tabName, doc);
+            await exportToSpreadsheet(sheet);
+        });
+
+    program
+        .command("searchmember <searchText>")
+        .action(async (searchText: string) => {
+            connect();
+            const members = await searchNames(searchText);
+            console.log(members);
+            disconnect();
         });
 
     await program.parseAsync(process.argv);
