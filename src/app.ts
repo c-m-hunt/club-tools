@@ -14,6 +14,8 @@ import logger from "logger";
 import { importMembers, exportToSpreadsheet } from "club/members/ops";
 import { getDoc, getSheetByTitle } from "lib/googleSheets/sheets";
 import { getRegisterFromSheet } from "club/registerSheet";
+import { searchNames } from "lib/clubDb/search";
+import { connect, disconnect } from "lib/clubDb";
 
 program.version("0.1.0");
 async function main() {
@@ -68,10 +70,12 @@ async function main() {
         });
 
     program
-        .command("searchmember")
-        .action(async () => {
-            const members = await searchMembers("hunt");
+        .command("searchmember <searchText>")
+        .action(async (searchText: string) => {
+            connect();
+            const members = await searchNames(searchText);
             console.log(members);
+            disconnect();
         });
 
     await program.parseAsync(process.argv);
