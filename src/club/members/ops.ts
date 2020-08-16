@@ -24,7 +24,7 @@ export const importMembers = async () => {
 
 export const exportToSpreadsheet = async (sheet: GoogleSpreadsheetWorksheet) => {
     await sheet.clear();
-    await sheet.setHeaderRow(["id", "firstName", "lastName", "email", "tags"]);
+    await sheet.setHeaderRow(["id", "firstName", "lastName", "phone", "email", "tags"]);
     const members = await getMembers();
     const rows = members.map(m => memberToSpreadsheetRow(m));
     await sheet.addRows(rows);

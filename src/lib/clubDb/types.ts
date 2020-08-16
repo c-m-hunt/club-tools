@@ -14,7 +14,7 @@ export class Member {
     @prop({ required: true })
     lastName: string;
     @prop()
-    mobilePhone?: string;
+    phone?: string;
     @prop()
     email?: string;
     @prop({ _id: false })
@@ -42,6 +42,7 @@ export const memberToSpreadsheetRow = (m: MemberDB) => ({
     id: m._id,
     firstName: m.firstName,
     lastName: m.lastName,
+    phone: m.phone,
     email: m.email,
     tags: m.tags?.join(",")
 });
@@ -52,7 +53,8 @@ export const spreadsheetRowToMember = (row: GoogleSpreadsheetRow): Partial<Membe
         _id: row._rawData[0] as string,
         firstName: row._rawData[1] as string,
         lastName: row._rawData[2] as string,
-        email: row._rawData[3] as string,
+        phone: row._rawData[3] as string,
+        email: row._rawData[4] as string,
         tags: tagString ? tagString.split(",") : []
     };
 };
