@@ -26,6 +26,7 @@ export interface PayPalInvoiceParams {
 interface ClubDb {
     connectionString: string;
     dbName: string;
+    exportSheet: Sheet;
 }
 
 export interface Config {

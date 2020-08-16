@@ -1,7 +1,7 @@
 import { GoogleSpreadsheetWorksheet } from "google-spreadsheet";
 import { getAllMembers } from "../mailingList/mailchimp";
-import { Member, memberToSpreadsheetRow } from "lib/clubDb/types";
-import { connect, disconnect, insertMember, getMembers } from "lib/clubDb";
+import { Member, memberToSpreadsheetRow, MemberDB, spreadsheetRowToMember } from "lib/clubDb/types";
+import { connect, disconnect, insertMember, getMembers, updateMembers } from "lib/clubDb";
 import logger from "logger";
 import { config } from "config";
 
@@ -23,22 +23,22 @@ export const importMembers = async () => {
 };
 
 export const exportToSpreadsheet = async (sheet: GoogleSpreadsheetWorksheet) => {
-    connect();
     await sheet.clear();
-    await sheet.setHeaderRow(["id", "firstName", "lastName", "email", "tags"]);
+    await sheet.setHeaderRow(["id", "firstName", "lastName", "phone", "email", "tags"]);
     const members = await getMembers();
-    console.log(members);
     const rows = members.map(m => memberToSpreadsheetRow(m));
     await sheet.addRows(rows);
-    disconnect();
 };
 
-export const importFromSpreadsheet = () => {
-
+const getMembersExport = async (sheet: GoogleSpreadsheetWorksheet): Promise<Partial<MemberDB>[]> => {
+    const rows = await sheet.getRows({ offset: 1, limit: 500 });
+    const members = rows.map(row => spreadsheetRowToMember(row));
+    return members;
 };
 
-export const updateDatabase = (members: Member[]) => {
-
+export const updateMembersFromSpreadsheet = async (sheet: GoogleSpreadsheetWorksheet) => {
+    const members = await getMembersExport(sheet);
+    await updateMembers(members);
 };
 
 export const getContactFormResponses = async (sheet: GoogleSpreadsheetWorksheet): Promise<object[]> => {

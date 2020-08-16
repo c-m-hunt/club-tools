@@ -39,5 +39,6 @@ export const getAllMembers = async (listId: string): Promise<Member[]> => {
                 tags: m.tags.map((t: any) => t.name)
             }
         ));
+    console.log(members);
     return members;
 };

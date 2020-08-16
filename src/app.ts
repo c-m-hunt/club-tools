@@ -11,7 +11,7 @@ import { searchMembers } from "./club/mailingList/mailchimp";
 import { program } from "commander";
 import { config } from "config";
 import logger from "logger";
-import { importMembers, exportToSpreadsheet } from "club/members/ops";
+import { importMembers, exportToSpreadsheet, updateMembersFromSpreadsheet } from "club/members/ops";
 import { getDoc, getSheetByTitle } from "lib/googleSheets/sheets";
 import { getRegisterFromSheet } from "club/registerSheet";
 import { searchNames } from "lib/clubDb/search";
@@ -62,11 +62,25 @@ async function main() {
     program
         .command("export")
         .action(async () => {
-            const sheetId = "1w7Zdc_87-sVAq5jT-XrmlSE62NDFsGMUlcuOwdV-XW8";
-            const tabName = "Members";
+            connect();
+            const sheetId = config.clubDb.exportSheet.sheetId;
+            const tabName = config.clubDb.exportSheet.tabName;
             const doc = await getDoc(sheetId);
             const sheet = await getSheetByTitle(tabName, doc);
             await exportToSpreadsheet(sheet);
+            disconnect();
+        });
+
+    program
+        .command("update")
+        .action(async () => {
+            connect();
+            const sheetId = config.clubDb.exportSheet.sheetId;
+            const tabName = config.clubDb.exportSheet.tabName;
+            const doc = await getDoc(sheetId);
+            const sheet = await getSheetByTitle(tabName, doc);
+            await updateMembersFromSpreadsheet(sheet);
+            disconnect();
         });
 
     program

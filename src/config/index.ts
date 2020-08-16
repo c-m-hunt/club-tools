@@ -52,7 +52,11 @@ export const config: Config = {
     },
     clubDb: {
         connectionString: process.env["CLUB_DB_CONNECTION"],
-        dbName: process.env["CLUB_DB_NAME"]
+        dbName: process.env["CLUB_DB_NAME"],
+        exportSheet: {
+            sheetId: process.env.MEMBER_EXPORT_SHEET_ID,
+            tabName: process.env.MEMBER_EXPORT_TAB_NAME
+        }
     }
 };
 
