@@ -23,9 +23,7 @@ export const sendDraftInvoice = async (invoiceId: string) => {
 const createInvoices = async (players: MatchPlayer[], sendZeroInvoices: boolean = true, autoSend: boolean = false, dryRun: boolean = false) => {
   const inv = await getInvoiceSingleton(clientId, secret, sandbox);
   for (const player of players) {
-    logger.debug(player);
     const fee: MatchFeeType = feeTypes[player.feeType];
-    logger.debug(fee);
 
     let note = "If you have any queries over the amount you've been charged, please contact us. ";
 
@@ -34,7 +32,7 @@ const createInvoices = async (players: MatchPlayer[], sendZeroInvoices: boolean 
         note += `
         *** There is no balance on this invoice so no action is required by you. ***`;
       } else {
-        console.log("Zero fee - not sending");
+        logger.info(`Zero fee - ${player.name} - ${player.match} - ${fee.description}`);
         continue;
       }
     }
@@ -60,8 +58,7 @@ const createInvoices = async (players: MatchPlayer[], sendZeroInvoices: boolean 
       }]
     };
     if (dryRun) {
-      logger.info("Dry run. Would send:");
-      logger.info(JSON.stringify(invObj, null, 2));
+      logger.info(`Dry run. Would send: ${player.name} - ${player.match} - ${fee.description} - ${fee.currency} ${fee.value}`);
     } else {
       const response = await inv.generate(invObj);
       logger.info(`Invoice sent to ${player.name}`);
