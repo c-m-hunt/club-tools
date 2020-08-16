@@ -23,8 +23,12 @@ export class Member {
     tags?: string[];
 }
 
-export const memberToSpreadsheetRow = (m: any) => ({
-    id: (m as any)._id,
+export class MemberDB extends Member {
+    _id: string;
+}
+
+export const memberToSpreadsheetRow = (m: MemberDB) => ({
+    id: m._id,
     firstName: m.firstName,
     lastName: m.lastName,
     email: m.email,

@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { Member } from "./types";
+import { Member, MemberDB } from "./types";
 
 import { config } from "config";
 import { getModelForClass, ReturnModelType } from "@typegoose/typegoose";
@@ -28,7 +28,7 @@ export const insertMember = async (member: Member) => {
     return createdMember._id;
 };
 
-export const getMembers = async (): Promise<Member[]> => {
+export const getMembers = async (): Promise<MemberDB[]> => {
     const MemberModel = getMembmerModel();
     return await MemberModel.find({}).sort({ lastName: 1, firstName: 1 }).exec();
 };

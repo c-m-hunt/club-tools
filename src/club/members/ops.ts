@@ -23,14 +23,12 @@ export const importMembers = async () => {
 };
 
 export const exportToSpreadsheet = async (sheet: GoogleSpreadsheetWorksheet) => {
-    connect();
     await sheet.clear();
     await sheet.setHeaderRow(["id", "firstName", "lastName", "email", "tags"]);
     const members = await getMembers();
     console.log(members);
     const rows = members.map(m => memberToSpreadsheetRow(m));
     await sheet.addRows(rows);
-    disconnect();
 };
 
 export const importFromSpreadsheet = () => {
