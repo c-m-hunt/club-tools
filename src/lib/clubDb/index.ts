@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { Member, MemberDB, MemberSchema } from "./types";
+import { Member, MemberDB } from "./types";
 
 import { config } from "config";
 import { getModelForClass, ReturnModelType } from "@typegoose/typegoose";
@@ -29,9 +29,6 @@ export const connect = async () => {
 export const insertMember = async (member: Member) => {
   const MemberModel = getMembmerModel();
   const createdMember = await MemberModel.create(member);
-  // logger.debug("Inserted:");
-  //logger.debug(JSON.stringify(member, null, 2));
-  //logger.debug(JSON.stringify(createdMember, null, 2));
   return createdMember._id;
 };
 

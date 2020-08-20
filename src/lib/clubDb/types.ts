@@ -22,17 +22,6 @@ export class Member {
   tags: string[];
 }
 
-export const MemberSchema = new Schema({
-  firstName: String,
-  lastName: String,
-  mobilePhone: String,
-  email: String,
-  externalMapping: {
-    mailchimpId: String,
-  },
-  tags: [String],
-});
-
 export class MemberDB extends Member {
   _id: string;
 }
