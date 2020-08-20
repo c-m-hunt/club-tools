@@ -14,7 +14,8 @@
         "start-server-watch": "nodemon",
         "lint": "tsc --noEmit && eslint \"**/*.{js,ts}\" --quiet --fix",
         "test": "jest --forceExit --coverage --verbose",
-        "build": "tsc -p .",
+        "build": "tsc -p ./tsconfig.json",
+        "run:prod": "node -r ./tsconfig-paths-bootstrap.js dist/app.js",
         "import-members": "ts-node src/club/members/import.ts"
     },
     "dependencies": {
@@ -61,6 +62,7 @@
         "supertest": "^4.0.2",
         "ts-jest": "^24.1.0",
         "ts-node": "^8.10.2",
+        "tsconfig-paths": "^3.9.0",
         "typescript": "^3.6.3"
     }
 }
