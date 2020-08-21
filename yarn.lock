@@ -4249,9 +4249,9 @@ pkg-dir@^3.0.0:
     find-up "^3.0.0"
 
 play-cricket-client@^0.1.10:
-  version "0.1.12"
-  resolved "https://registry.yarnpkg.com/play-cricket-client/-/play-cricket-client-0.1.12.tgz#17de17fe9277b2ffdf08efe09ba3536b647b0d29"
-  integrity sha512-lNThQdwyozdjbhIXwimyonjPa+SScjCZTbkUNYk9a8LrFDTkJ10tNTabNrbcfyINcPStc9ZC2vK1R5faCxuqww==
+  version "0.1.13"
+  resolved "https://registry.yarnpkg.com/play-cricket-client/-/play-cricket-client-0.1.13.tgz#ba5c6f4d8fe08902728113e11b235412240dab45"
+  integrity sha512-RELI1jdNC6Cj0swRvnnFQf+UP79C4RA370fBftj4Pm0nYzFZj2SlNmhwEcP73fGZZLzC51ZwKHQoFWsH/LpW2Q==
   dependencies:
     axios "^0.19.2"
     typedoc "^0.16.9"
