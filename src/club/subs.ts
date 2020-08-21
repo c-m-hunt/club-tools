@@ -6,12 +6,28 @@ import { getRegisterFromSheet } from "./registerSheet";
 import { GBP } from "consts";
 import { MatchPlayer, MatchFeeType } from "./feeTypes";
 import { config } from "config";
-
 import logger from "logger";
+import { Client } from "play-cricket-client";
+import { match } from "assert";
+import { getRecentMatches, getPlayers } from "./matches";
 
 const feeTypes = config.fees.feeTypes;
 
 const { clientId, secret, sandbox, invoiceer } = config.fees.invoiceParams;
+
+
+export const chargeSubs = async () => {
+  const teams = config.cricket.playCricket.teams;
+  const matches = await getRecentMatches(
+    6,
+    config.cricket.playCricket.siteId,
+    teams
+  );
+  const matchIds = matches.map(m => m.id);
+  const playerPromises = matchIds.map(m => getPlayers(m, teams));
+  const players = await Promise.all(playerPromises);
+  console.log(players.flat(2));
+};
 
 export const sendDraftInvoice = async (invoiceId: string) => {
   const inv = await getInvoiceSingleton(clientId, secret, sandbox);

@@ -1,4 +1,4 @@
-import { produceInvoices, owedInvoices } from "club/subs";
+import { produceInvoices, owedInvoices, chargeSubs } from "club/subs";
 import { getAvailability } from "./club/availability";
 
 import { sendToSlack } from "lib/slack";
@@ -11,6 +11,7 @@ import { searchMembers } from "./club/mailingList/mailchimp";
 import { program } from "commander";
 import { config } from "config";
 import logger from "logger";
+import fs from "fs";
 import {
   importMembers,
   exportToSpreadsheet,
@@ -20,6 +21,7 @@ import { getDoc, getSheetByTitle } from "lib/googleSheets/sheets";
 import { getRegisterFromSheet } from "club/registerSheet";
 import { searchNames } from "lib/clubDb/search";
 import { connect, disconnect } from "lib/clubDb";
+import { ResultSummaryResponse } from "play-cricket-client/dist/lib/interface/resultSummary";
 
 program.version("0.1.0");
 async function main() {
@@ -29,7 +31,7 @@ async function main() {
     .action(async (cmd) => {
       const availability = await getAvailability(config.availability.sheet);
       const available = availability.filter(
-        (a) => (a.availability.includes(cmd.date))
+        (a) => (a.availability.includes(cmd.date)),
       ).map((a) => a.name);
       console.log(available);
     });
@@ -53,13 +55,13 @@ async function main() {
   //         await sendToSlack(invoicesList("Unpaid invoices", invoices));
   //     });
 
-  // program
-  //     .command("leaguetable")
-  //     .action(async () => {
-  //         const client = new Client(config.cricket.playCricket.apiKey);
-  //         const div = await client.getLeagueTable(92794);
-  //         console.log(div);
-  //     });
+  program
+    .command("leaguetable")
+    .action(async () => {
+      const client = new Client(config.cricket.playCricket.apiKey);
+      const div = await client.getLeagueTable(92794);
+      console.log(div);
+    });
 
   program
     .command("import")
@@ -102,8 +104,9 @@ async function main() {
     });
 
   program
-    .command("weeklyplayers")
+    .command("chargesubs")
     .action(async () => {
+      await chargeSubs();
     });
 
   await program.parseAsync(process.argv);

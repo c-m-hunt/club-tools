@@ -38,6 +38,8 @@ export const config: Config = {
   cricket: {
     playCricket: {
       apiKey: process.env["PLAY_CRICKET_API_KEY"],
+      siteId: parseInt(process.env["PLAY_CRICKET_SITE_ID"]),
+      teams: process.env["PLAY_CRICKET_TEAMS"].split(","),
     },
   },
   communication: {
