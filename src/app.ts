@@ -16,6 +16,7 @@ import {
   importMembers,
   exportToSpreadsheet,
   updateMembersFromSpreadsheet,
+  importFromSpreadsheet,
 } from "club/members/ops";
 import { getDoc, getSheetByTitle } from "lib/googleSheets/sheets";
 import { getRegisterFromSheet } from "club/registerSheet";
@@ -64,9 +65,20 @@ async function main() {
     });
 
   program
-    .command("import")
+    .command("mailinglistimport")
     .action(async () => {
       const members = await importMembers();
+      console.log(members);
+    });
+
+  program
+    .command("financeimport")
+    .action(async () => {
+      const sheetId = config.clubDb.exportSheet.sheetId;
+      const tabName = "FinanceImport";
+      const doc = await getDoc(sheetId);
+      const sheet = await getSheetByTitle(tabName, doc);
+      const members = await importFromSpreadsheet(sheet);
       console.log(members);
     });
 

@@ -7,4 +7,4 @@ export const getPlayCricketClient = () => {
         playCricketClient = new Client(config.cricket.playCricket.apiKey);
     }
     return playCricketClient;
-}
+};

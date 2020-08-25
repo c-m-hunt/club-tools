@@ -4,7 +4,11 @@ import { feeTypes } from "./fees";
 
 export { FeeTypes, Config, Sheet } from "./types";
 
-dotenv.config({ path: "./.env.prod" });
+if (process.env["ENV"] == "PROD") {
+  dotenv.config({ path: "./.env.prod" });
+} else {
+  dotenv.config({ path: "./.env" });
+}
 
 export const config: Config = {
   availability: {

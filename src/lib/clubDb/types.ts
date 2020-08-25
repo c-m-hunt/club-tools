@@ -1,17 +1,20 @@
 import { prop } from "@typegoose/typegoose";
 import { GoogleSpreadsheetRow } from "google-spreadsheet";
-import { Schema } from "mongoose";
 
 export class ExternalMapping {
   @prop()
-  mailchimpId: string;
+  mailchimpId?: string;
+  @prop()
+  playCricketId?: string;
 }
 
 export class Member {
   @prop({ required: true })
-  public firstName: string;
+  firstName: string;
   @prop({ required: true })
   lastName: string;
+  @prop()
+  dateOfBirth?: Date;
   @prop()
   phone?: string;
   @prop()
