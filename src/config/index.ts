@@ -1,12 +1,15 @@
 import dotenv from "dotenv";
 import { Config } from "./types";
 import { feeTypes } from "./fees";
+import logger from "logger";
 
 export { FeeTypes, Config, Sheet } from "./types";
 
 if (process.env["ENV"] == "PROD") {
+  logger.info("RUNNING LIVE CONFIG");
   dotenv.config({ path: "./.env.prod" });
 } else {
+  logger.info("Running dev config");
   dotenv.config({ path: "./.env" });
 }
 
