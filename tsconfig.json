@@ -1,6 +1,9 @@
 {
     "compilerOptions": {
         "module": "commonjs",
+        "lib": [
+            "es2019"
+        ],
         "esModuleInterop": true,
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
@@ -15,7 +18,7 @@
             "*": [
                 "node_modules/*",
                 "types/*",
-                "*",
+                "*"
             ],
             "club/*": [
                 "club/*"
@@ -35,6 +38,6 @@
         }
     },
     "include": [
-        "src/**/*"
+        "./src/**/*"
     ]
 }

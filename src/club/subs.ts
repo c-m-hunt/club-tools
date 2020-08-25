@@ -1,17 +1,34 @@
 import moment from "moment";
 
-import { Invoice, InvoiceOptions, getInvoiceSingleton } from "lib/paypal/invoice";
+import {
+  Invoice,
+  InvoiceOptions,
+  getInvoiceSingleton,
+} from "lib/paypal/invoice";
 import { getDoc, getSheetByTitle } from "lib/googleSheets/sheets";
 import { getRegisterFromSheet } from "./registerSheet";
 import { GBP } from "consts";
 import { MatchPlayer, MatchFeeType } from "./feeTypes";
 import { config } from "config";
-
 import logger from "logger";
+import { getRecentMatches, getPlayers } from "./matches";
 
 const feeTypes = config.fees.feeTypes;
 
 const { clientId, secret, sandbox, invoiceer } = config.fees.invoiceParams;
+
+export const chargeSubs = async () => {
+  const teams = config.cricket.playCricket.teams;
+  const matches = await getRecentMatches(
+    8,
+    config.cricket.playCricket.siteId,
+    teams,
+  );
+  const matchIds = matches.map((m) => m.id);
+  const playerPromises = matchIds.map((m) => getPlayers(m, teams));
+  const players = await Promise.all(playerPromises);
+  console.log(players.flat(2));
+};
 
 export const sendDraftInvoice = async (invoiceId: string) => {
   const inv = await getInvoiceSingleton(clientId, secret, sandbox);
@@ -20,19 +37,27 @@ export const sendDraftInvoice = async (invoiceId: string) => {
   logger.info(`Invoice ${invoiceId} sent`);
 };
 
-const createInvoices = async (players: MatchPlayer[], sendZeroInvoices: boolean = true, autoSend: boolean = false, dryRun: boolean = false) => {
+const createInvoices = async (
+  players: MatchPlayer[],
+  sendZeroInvoices: boolean = true,
+  autoSend: boolean = false,
+  dryRun: boolean = false,
+) => {
   const inv = await getInvoiceSingleton(clientId, secret, sandbox);
   for (const player of players) {
     const fee: MatchFeeType = feeTypes[player.feeType];
 
-    let note = "If you have any queries over the amount you've been charged, please contact us. ";
+    let note =
+      "If you have any queries over the amount you've been charged, please contact us. ";
 
     if (fee.value == 0) {
       if (sendZeroInvoices) {
         note += `
         *** There is no balance on this invoice so no action is required by you. ***`;
       } else {
-        logger.info(`Zero fee - ${player.name} - ${player.match} - ${fee.description}`);
+        logger.info(
+          `Zero fee - ${player.name} - ${player.match} - ${fee.description}`,
+        );
         continue;
       }
     }
@@ -42,23 +67,25 @@ const createInvoices = async (players: MatchPlayer[], sendZeroInvoices: boolean 
       currency: GBP,
       recipient: {
         name: player.name,
-        emailAddress: player.email
+        emailAddress: player.email,
       },
       invoicer: {
         companyName: invoiceer.company,
         name: invoiceer.contactName,
         email: invoiceer.email,
-        logo: invoiceer.logo
+        logo: invoiceer.logo,
       },
       fees: [{
         name: player.name,
         date: new Date(),
         description: player.match,
-        type: fee
-      }]
+        type: fee,
+      }],
     };
     if (dryRun) {
-      logger.info(`Dry run. Would send: ${player.name} - ${player.match} - ${fee.description} - ${fee.currency} ${fee.value}`);
+      logger.info(
+        `Dry run. Would send: ${player.name} - ${player.match} - ${fee.description} - ${fee.currency} ${fee.value}`,
+      );
     } else {
       const response = await inv.generate(invObj);
       logger.info(`Invoice sent to ${player.name}`);
@@ -109,13 +136,18 @@ const deleteInvoice = async (invoiceId: string) => {
   console.log(invoice);
 };
 
-export const produceInvoices = async (dryRun: boolean = false, autoSend: boolean = true) => {
+export const produceInvoices = async (
+  dryRun: boolean = false,
+  autoSend: boolean = true,
+) => {
   if (dryRun) {
     logger.info("Running dry run - nothing will be created");
   } else {
     logger.info("THIS IS A LIVE RUN - INVOICES WILL BE CREATED");
     if (autoSend) {
-      logger.info("AUTOSEND IS ON - INVOICES WILL AUTOMATICALLY BE SENT ONCE CREATED");
+      logger.info(
+        "AUTOSEND IS ON - INVOICES WILL AUTOMATICALLY BE SENT ONCE CREATED",
+      );
     }
   }
   const players = await getRegister();

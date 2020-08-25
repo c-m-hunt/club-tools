@@ -4,7 +4,11 @@ import { feeTypes } from "./fees";
 
 export { FeeTypes, Config, Sheet } from "./types";
 
-dotenv.config({ path: "./.env.prod" });
+if (process.env["ENV"] == "PROD") {
+  dotenv.config({ path: "./.env.prod" });
+} else {
+  dotenv.config({ path: "./.env" });
+}
 
 export const config: Config = {
   availability: {
@@ -38,6 +42,8 @@ export const config: Config = {
   cricket: {
     playCricket: {
       apiKey: process.env["PLAY_CRICKET_API_KEY"],
+      siteId: parseInt(process.env["PLAY_CRICKET_SITE_ID"]),
+      teams: process.env["PLAY_CRICKET_TEAMS"].split(","),
     },
   },
   communication: {

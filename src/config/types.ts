@@ -1,60 +1,62 @@
 export interface FeeTypes {
-    [key: string]: {
-        description: string;
-        value: number;
-        currency: "GBP";
-    };
+  [key: string]: {
+    description: string;
+    value: number;
+    currency: "GBP";
+  };
 }
 
 export interface Sheet {
-    sheetId: string;
-    tabName: string;
+  sheetId: string;
+  tabName: string;
 }
 
 export interface PayPalInvoiceParams {
-    clientId: string;
-    secret: string;
-    sandbox: boolean;
-    invoiceer: {
-        company: string;
-        contactName: string;
-        email: string;
-        logo: string;
-    };
+  clientId: string;
+  secret: string;
+  sandbox: boolean;
+  invoiceer: {
+    company: string;
+    contactName: string;
+    email: string;
+    logo: string;
+  };
 }
 
 interface ClubDb {
-    connectionString: string;
-    dbName: string;
-    exportSheet: Sheet;
+  connectionString: string;
+  dbName: string;
+  exportSheet: Sheet;
 }
 
 export interface Config {
-    clubDb: ClubDb;
-    availability: {
-        sheet: Sheet;
+  clubDb: ClubDb;
+  availability: {
+    sheet: Sheet;
+  };
+  register: {
+    sheet: Sheet;
+  };
+  fees: {
+    feeTypes: FeeTypes;
+    sendZeroInvoices: boolean;
+    slackWebhookUrl: string;
+    invoiceParams: PayPalInvoiceParams;
+  };
+  cricket: {
+    playCricket: {
+      apiKey: string;
+      siteId: number;
+      teams: string[];
     };
-    register: {
-        sheet: Sheet;
+  };
+  communication: {
+    slack: {
+      commandToken: string;
     };
-    fees: {
-        feeTypes: FeeTypes;
-        sendZeroInvoices: boolean;
-        slackWebhookUrl: string;
-        invoiceParams: PayPalInvoiceParams;
+    mailchimp: {
+      apiKey: string;
+      listId: string;
     };
-    cricket: {
-        playCricket: {
-            apiKey: string;
-        };
-    };
-    communication: {
-        slack: {
-            commandToken: string;
-        };
-        mailchimp: {
-            apiKey: string;
-            listId: string;
-        };
-    };
-} 
+  };
+}
