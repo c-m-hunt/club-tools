@@ -1,5 +1,7 @@
 import { prop } from "@typegoose/typegoose";
 import { GoogleSpreadsheetRow } from "google-spreadsheet";
+import { FeeTypes } from "club/feeTypes";
+import { type } from "os";
 
 export class ExternalMapping {
   @prop()
@@ -19,6 +21,8 @@ export class Member {
   phone?: string;
   @prop()
   email?: string;
+  @prop({ type: String })
+  matchFeeBand?: keyof FeeTypes;
   @prop({ _id: false })
   externalMapping?: ExternalMapping;
   @prop({ type: String })

@@ -8,7 +8,7 @@ import {
 import { getDoc, getSheetByTitle } from "lib/googleSheets/sheets";
 import { getRegisterFromSheet } from "./registerSheet";
 import { GBP } from "consts";
-import { MatchPlayer, MatchFeeType } from "./feeTypes";
+import { MatchPlayer, MatchFeeType, FeeTypes } from "./feeTypes";
 import { config } from "config";
 import logger from "logger";
 import { getRecentMatches, getPlayers } from "./matches";
@@ -162,3 +162,8 @@ export const owedInvoices = async () => {
   logger.info(`Found ${invoices.items.length}`);
   return invoices.items;
 };
+
+
+export const feeKeyExists = (key: string, feeTypes: FeeTypes) => {
+  return Object.keys(feeTypes).includes(key);
+}

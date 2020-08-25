@@ -16,6 +16,8 @@ import {
 import logger from "logger";
 import { config } from "config";
 import moment from "moment";
+import { feeTypes } from "config/fees";
+import { feeKeyExists } from "club/subs";
 
 export const importFromSpreadsheet = async (sheet: GoogleSpreadsheetWorksheet) => {
   await connect();
@@ -29,6 +31,7 @@ export const importFromSpreadsheet = async (sheet: GoogleSpreadsheetWorksheet) =
       externalMapping: {
         playCricketId: row._rawData[3] as string
       },
+      matchFeeBand: row._rawData[5] && feeKeyExists(row._rawData[5], feeTypes) ? row._rawData[5] : null,
       email: row._rawData[4] as string,
       tags: ["Player"]
     };
