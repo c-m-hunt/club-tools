@@ -1,4 +1,4 @@
-import { produceInvoices, owedInvoices } from "club/subs";
+import { produceInvoices } from "club/subs";
 import { getAvailability } from "./club/availability";
 
 import { sendToSlack } from "lib/slack";
@@ -23,7 +23,7 @@ import { getRegisterFromSheet } from "club/registerSheet";
 import { searchNames } from "lib/clubDb/search";
 import { connect, disconnect } from "lib/clubDb";
 import { ResultSummaryResponse } from "play-cricket-client/dist/lib/interface/resultSummary";
-import { financeListImport, chargeSubs } from "cli";
+import { financeListImport, chargeSubs, owedInvoices } from "cli";
 
 program.version("0.1.0");
 async function main() {
@@ -49,13 +49,9 @@ async function main() {
       await produceInvoices(cmd.dryrun, cmd.send);
     });
 
-  // program
-  //     .command("owing")
-  //     .action(async () => {
-  //         const invoices = await owedInvoices();
-  //         logger.info("Posting unpiad invoice list to Slack");
-  //         await sendToSlack(invoicesList("Unpaid invoices", invoices));
-  //     });
+  program
+    .command("owing")
+    .action(owedInvoices);
 
   program
     .command("leaguetable")

@@ -18,16 +18,11 @@ const feeTypes = config.fees.feeTypes;
 
 const { clientId, secret, sandbox, invoiceer } = config.fees.invoiceParams;
 
-export const chargeSubs = async () => {
-  const teams = config.cricket.playCricket.teams;
-  const matches = await getRecentMatches(
-    8,
-    config.cricket.playCricket.siteId,
-    teams,
-  );
-  const matchIds = matches.map((m) => m.id);
-  const playerPromises = matchIds.map((m) => getPlayers(m, teams));
-  const players = (await Promise.all(playerPromises)).flat(2);
+export const chargeSubsForMatch = async (
+  matchId: number,
+  chargeTeams: string[],
+) => {
+  const players = await getPlayers(matchId, chargeTeams);
   let errors = 0;
   for (const p of players) {
     const mappedPlayerResponse = await getPlayerByPlayCricketId(p.playerId);
