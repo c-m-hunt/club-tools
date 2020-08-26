@@ -1,19 +1,19 @@
-import { prop } from "@typegoose/typegoose";
+import { prop, index } from "@typegoose/typegoose";
 import { GoogleSpreadsheetRow } from "google-spreadsheet";
-import { FeeTypes } from "club/feeTypes";
-import { type } from "os";
 
 export class ExternalMapping {
   @prop()
   mailchimpId?: string;
-  @prop()
+  @prop({ unique: true })
   playCricketId?: string;
 }
 
+@index({ "externalMapping.playCricketId": 1 })
+@index({ firstName: "text", lastName: "text" })
 export class Member {
   @prop({ required: true })
   firstName: string;
-  @prop({ required: true })
+  @prop({ required: true, index: true })
   lastName: string;
   @prop()
   dateOfBirth?: Date;
@@ -22,7 +22,7 @@ export class Member {
   @prop()
   email?: string;
   @prop({ type: String })
-  matchFeeBand?: keyof FeeTypes;
+  matchFeeBand?: string;
   @prop({ _id: false })
   externalMapping?: ExternalMapping;
   @prop({ type: String })

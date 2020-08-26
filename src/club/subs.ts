@@ -12,6 +12,7 @@ import { MatchPlayer, MatchFeeType, FeeTypes } from "./feeTypes";
 import { config } from "config";
 import logger from "logger";
 import { getRecentMatches, getPlayers } from "./matches";
+import { getPlayerByPlayCricketId, getMembers } from "lib/clubDb/query";
 
 const feeTypes = config.fees.feeTypes;
 
@@ -26,8 +27,56 @@ export const chargeSubs = async () => {
   );
   const matchIds = matches.map((m) => m.id);
   const playerPromises = matchIds.map((m) => getPlayers(m, teams));
-  const players = await Promise.all(playerPromises);
-  console.log(players.flat(2));
+  const players = (await Promise.all(playerPromises)).flat(2);
+  let errors = 0;
+  for (const p of players) {
+    const mappedPlayerResponse = await getPlayerByPlayCricketId(p.playerId);
+    if (mappedPlayerResponse.length == 0) {
+      logger.error(
+        `No player found for Play Cricket ID ${p.playerId} (${p.name})`,
+      );
+      errors += 1;
+    } else if (mappedPlayerResponse.length > 1) {
+      logger.error(
+        `Multiple players found for Play Cricket ID ${p.playerId} (${p.name})`,
+      );
+      errors += 1;
+    }
+
+    // Only do the checks on player and fees if there have been no errors so far
+    if (errors === 0) {
+      const mappedPlayer = mappedPlayerResponse[0];
+      if (!Object.keys(feeTypes).includes(mappedPlayer.matchFeeBand)) {
+        logger.error(
+          `Player ${p.name} has fee band ${mappedPlayer.matchFeeBand} which doesn't exist`,
+        );
+        errors += 1;
+      }
+
+      const fee = await getMatchFee(mappedPlayer.matchFeeBand);
+      if (!mappedPlayer.email || mappedPlayer.email.length === 0) {
+        if (fee.value > 0) {
+          logger.error(`Player ${p.name} has no email address`);
+          errors += 1;
+        } else {
+          logger.warn(
+            `Player ${p.name} has no email address but set to zero fee. Should fix.`,
+          );
+        }
+      }
+    }
+  }
+  if (errors === 0) {
+    logger.info("All players found with fees. Charge them!");
+  } else {
+    logger.error(
+      "There were errors so cannot continue to sending match fee invoices",
+    );
+  }
+};
+
+export const getMatchFee = async (feeCode: string) => {
+  return feeTypes[feeCode];
 };
 
 export const sendDraftInvoice = async (invoiceId: string) => {
@@ -163,7 +212,6 @@ export const owedInvoices = async () => {
   return invoices.items;
 };
 
-
 export const feeKeyExists = (key: string, feeTypes: FeeTypes) => {
   return Object.keys(feeTypes).includes(key);
-}
+};

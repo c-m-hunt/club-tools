@@ -24,5 +24,4 @@ export interface MatchPlayer {
   match: string;
   feeType: keyof FeeTypes;
   date: moment.Moment;
-
 }

@@ -10,44 +10,44 @@ import {
   connect,
   disconnect,
   insertMember,
-  getMembers,
-  updateMembers,
+  updateMembersById,
+  updateMembersByPlayCricketId,
 } from "lib/clubDb";
+import {
+  getMembers,
+} from "lib/clubDb/query";
 import logger from "logger";
 import { config } from "config";
 import moment from "moment";
 import { feeTypes } from "config/fees";
 import { feeKeyExists } from "club/subs";
 
-export const importFromSpreadsheet = async (sheet: GoogleSpreadsheetWorksheet) => {
+export const importFromSpreadsheet = async (
+  sheet: GoogleSpreadsheetWorksheet,
+) => {
   await connect();
 
-  const rows = await sheet.getRows({ offset: 1, limit: 500 });
-  const members: Member[] = rows.map(row => {
+  const rows = await sheet.getRows({ offset: 0, limit: 500 });
+  const members: Member[] = rows.map((row) => {
     return {
       firstName: row._rawData[0] as string,
       lastName: row._rawData[1] as string,
-      dateOfBirth: row._rawData[2] ? moment(row._rawData[2], "DD-MMM-YYYY").toDate() : null,
+      dateOfBirth: row._rawData[2]
+        ? moment(row._rawData[2], "DD-MMM-YYYY").toDate()
+        : null,
       externalMapping: {
-        playCricketId: row._rawData[3] as string
+        playCricketId: row._rawData[3] as string,
       },
-      matchFeeBand: row._rawData[5] && feeKeyExists(row._rawData[5], feeTypes) ? row._rawData[5] : null,
+      matchFeeBand: row._rawData[5] && feeKeyExists(row._rawData[5], feeTypes)
+        ? row._rawData[5]
+        : null,
       email: row._rawData[4] as string,
-      tags: ["Player"]
+      tags: ["Player"],
     };
   });
-  const importedMembers = [];
-  for (const m of members) {
-    try {
-      importedMembers.push(insertMember(m as Member));
-    } catch (ex) {
-      logger.error("Failed to insert for:");
-      logger.error(JSON.stringify(m, null, 2));
-    }
-  }
-  const responses = await Promise.all(importedMembers);
+  const response = await updateMembersByPlayCricketId(members);
   disconnect();
-  return responses;
+  return response;
 };
 
 export const importMembers = async () => {
@@ -56,7 +56,7 @@ export const importMembers = async () => {
   const importedMembers = [];
   for (const m of members) {
     try {
-      importedMembers.push(insertMember(m as Member));
+      importedMembers.push((m as Member));
     } catch (ex) {
       logger.error("Failed to insert for:");
       logger.error(JSON.stringify(m, null, 2));
@@ -75,6 +75,7 @@ export const exportToSpreadsheet = async (
     ["id", "firstName", "lastName", "phone", "email", "tags"],
   );
   const members = await getMembers();
+  console.log(members);
   const rows = members.map((m) => memberToSpreadsheetRow(m));
   await sheet.addRows(rows);
 };
@@ -91,7 +92,7 @@ export const updateMembersFromSpreadsheet = async (
   sheet: GoogleSpreadsheetWorksheet,
 ) => {
   const members = await getMembersExport(sheet);
-  await updateMembers(members);
+  await updateMembersById(members);
 };
 
 export const getContactFormResponses = async (

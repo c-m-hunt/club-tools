@@ -41,7 +41,8 @@ export const getPlayers = async (matchId: number, teams: string[]) => {
     venue = "Away";
   }
   return players.map((p) => ({
-    id: p.player_id,
+    playerId: p.player_id,
+    matchId,
     name: p.player_name,
     oppo: match[oppoTeamName],
     venue,

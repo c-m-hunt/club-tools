@@ -1,4 +1,4 @@
-import { produceInvoices, owedInvoices, chargeSubs } from "club/subs";
+import { produceInvoices, owedInvoices } from "club/subs";
 import { getAvailability } from "./club/availability";
 
 import { sendToSlack } from "lib/slack";
@@ -23,6 +23,7 @@ import { getRegisterFromSheet } from "club/registerSheet";
 import { searchNames } from "lib/clubDb/search";
 import { connect, disconnect } from "lib/clubDb";
 import { ResultSummaryResponse } from "play-cricket-client/dist/lib/interface/resultSummary";
+import { financeListImport, chargeSubs } from "cli";
 
 program.version("0.1.0");
 async function main() {
@@ -73,14 +74,7 @@ async function main() {
 
   program
     .command("financeimport")
-    .action(async () => {
-      const sheetId = config.clubDb.exportSheet.sheetId;
-      const tabName = "FinanceImport";
-      const doc = await getDoc(sheetId);
-      const sheet = await getSheetByTitle(tabName, doc);
-      const members = await importFromSpreadsheet(sheet);
-      console.log(members);
-    });
+    .action(financeListImport);
 
   program
     .command("export")
@@ -117,9 +111,7 @@ async function main() {
 
   program
     .command("chargesubs")
-    .action(async () => {
-      await chargeSubs();
-    });
+    .action(chargeSubs);
 
   await program.parseAsync(process.argv);
 }

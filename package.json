@@ -29,6 +29,7 @@
         "errorhandler": "^1.5.1",
         "express": "^4.17.1",
         "google-spreadsheet": "^3.0.11",
+        "inquirer": "^7.3.3",
         "mailchimp-api-v3": "^1.14.0",
         "moment": "^2.27.0",
         "mongoose": "^5.9.27",
