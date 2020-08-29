@@ -1,6 +1,6 @@
 import { format, transports, createLogger } from "winston";
 
-const logLevel = process.env["PRODUCTION"] ? "info" : "debug";
+const logLevel = process.env["PRODUCTION"] ? "info" : "info";
 
 const logger = createLogger({
   level: logLevel,
@@ -8,9 +8,9 @@ const logger = createLogger({
     format.colorize(),
     format.timestamp(),
     format.align(),
-    format.printf(info => `${info.timestamp} ${info.level}: ${info.message}`)
+    format.printf((info) => `${info.timestamp} ${info.level}: ${info.message}`),
   ),
-  transports: [new transports.Console()]
+  transports: [new transports.Console()],
 });
 
 export default logger;

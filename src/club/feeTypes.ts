@@ -16,13 +16,13 @@ export interface FeeTypes {
 }
 
 export interface MatchPlayer {
-  dateCompleted: string;
+  playerId: number;
+  matchId: number;
   name: string;
-  phone: string;
-  email: string;
-  confirm: boolean;
-  match: string;
-  feeType: keyof FeeTypes;
-  date: moment.Moment;
-
+  oppo: string;
+  team: string;
+  venue: "Home" | "Away";
+  date: string;
+  email?: string;
+  fee?: MatchFeeType;
 }

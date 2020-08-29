@@ -1,17 +1,19 @@
-import { prop } from "@typegoose/typegoose";
+import { prop, index } from "@typegoose/typegoose";
 import { GoogleSpreadsheetRow } from "google-spreadsheet";
 
 export class ExternalMapping {
   @prop()
   mailchimpId?: string;
-  @prop()
+  @prop({ unique: true })
   playCricketId?: string;
 }
 
+@index({ "externalMapping.playCricketId": 1 })
+@index({ firstName: "text", lastName: "text" })
 export class Member {
   @prop({ required: true })
   firstName: string;
-  @prop({ required: true })
+  @prop({ required: true, index: true })
   lastName: string;
   @prop()
   dateOfBirth?: Date;
@@ -19,6 +21,8 @@ export class Member {
   phone?: string;
   @prop()
   email?: string;
+  @prop({ type: String })
+  matchFeeBand?: string;
   @prop({ _id: false })
   externalMapping?: ExternalMapping;
   @prop({ type: String })

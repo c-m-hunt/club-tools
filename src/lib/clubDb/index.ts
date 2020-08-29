@@ -11,7 +11,6 @@ export const getMembmerModel = () => {
     return MemberModel;
   }
   MemberModel = getModelForClass(Member);
-  MemberModel.schema.index({ firstName: "text", lastName: "text" });
   return MemberModel;
 };
 
@@ -21,6 +20,7 @@ export const connect = async () => {
     {
       useNewUrlParser: true,
       useUnifiedTopology: true,
+      useCreateIndex: true,
       dbName: config.clubDb.dbName,
     },
   );
@@ -32,7 +32,29 @@ export const insertMember = async (member: Member) => {
   return createdMember._id;
 };
 
-export const updateMembers = async (members: Partial<MemberDB>[]) => {
+export const updateMembersByPlayCricketId = async (
+  members: Partial<Member>[],
+) => {
+  const MemberModel = getMembmerModel();
+  const bulk = MemberModel.collection.initializeUnorderedBulkOp();
+  for (const m of members) {
+    if (m.externalMapping.playCricketId) {
+      bulk.find(
+        {
+          "externalMapping.playCricketId": m.externalMapping.playCricketId,
+        },
+      ).upsert().updateOne(m);
+    } else {
+      logger.info(
+        `Could not insert/update ${m.firstName} ${m.lastName} as they have no Play Cricket ID`,
+      );
+    }
+  }
+  const results = await bulk.execute();
+  console.log(results);
+};
+
+export const updateMembersById = async (members: Partial<MemberDB>[]) => {
   const MemberModel = getMembmerModel();
   const bulk = MemberModel.collection.initializeUnorderedBulkOp();
   for (const m of members) {
@@ -46,11 +68,6 @@ export const updateMembers = async (members: Partial<MemberDB>[]) => {
   }
   const results = await bulk.execute();
   console.log(results);
-};
-
-export const getMembers = async (): Promise<any[]> => {
-  const MemberModel = getMembmerModel();
-  return await MemberModel.find({}).sort({ lastName: 1, firstName: 1 }).exec();
 };
 
 export const disconnect = async () => {

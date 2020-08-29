@@ -1,6 +1,5 @@
 import { GBP } from "consts";
 import { FeeTypes } from "./types";
-
 export const feeTypes: FeeTypes = {
     A: {
         description: "Adult",
@@ -33,6 +32,11 @@ export const feeTypes: FeeTypes = {
         currency: GBP
     },
     C: {
+        description: "Concession",
+        value: 5,
+        currency: GBP
+    },
+    F: {
         description: "Complementary",
         value: 0,
         currency: GBP

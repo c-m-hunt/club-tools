@@ -1,40 +1,71 @@
 import moment from "moment";
 
 import {
-  Invoice,
   InvoiceOptions,
   getInvoiceSingleton,
 } from "lib/paypal/invoice";
-import { getDoc, getSheetByTitle } from "lib/googleSheets/sheets";
-import { getRegisterFromSheet } from "./registerSheet";
 import { GBP } from "consts";
-import { MatchPlayer, MatchFeeType } from "./feeTypes";
+import { MatchPlayer, MatchFeeType, FeeTypes } from "./feeTypes";
 import { config } from "config";
 import logger from "logger";
-import { getRecentMatches, getPlayers } from "./matches";
+import { getPlayers } from "./matches";
+import { getPlayerByPlayCricketId } from "lib/clubDb/query";
 
 const feeTypes = config.fees.feeTypes;
 
 const { clientId, secret, sandbox, invoiceer } = config.fees.invoiceParams;
 
-export const chargeSubs = async () => {
-  const teams = config.cricket.playCricket.teams;
-  const matches = await getRecentMatches(
-    8,
-    config.cricket.playCricket.siteId,
-    teams,
-  );
-  const matchIds = matches.map((m) => m.id);
-  const playerPromises = matchIds.map((m) => getPlayers(m, teams));
-  const players = await Promise.all(playerPromises);
-  console.log(players.flat(2));
+export const getMatchFee = async (feeCode: string) => {
+  return feeTypes[feeCode];
+};
+
+export const getPlayersAndFeesForMatch = async (
+  matchId: number,
+  chargeTeams: string[],
+): Promise<{ players: MatchPlayer[]; errors: number }> => {
+  const players = await getPlayers(matchId, chargeTeams);
+  let errors = 0;
+  for (const p of players) {
+    const mappedPlayerResponse = await getPlayerByPlayCricketId(p.playerId);
+    if (mappedPlayerResponse.length == 0) {
+      logger.error(
+        `No player found for Play Cricket ID ${p.playerId} (${p.name})`,
+      );
+      errors += 1;
+    } else if (mappedPlayerResponse.length > 1) {
+      logger.error(
+        `Multiple players found for Play Cricket ID ${p.playerId} (${p.name})`,
+      );
+      errors += 1;
+    }
+
+    // Only do the checks on player and fees if there have been no errors so far
+    if (errors === 0) {
+      const mappedPlayer = mappedPlayerResponse[0];
+      if (!Object.keys(feeTypes).includes(mappedPlayer.matchFeeBand)) {
+        logger.error(
+          `Player ${p.name} has fee band ${mappedPlayer.matchFeeBand} which doesn't exist`,
+        );
+        errors += 1;
+      }
+
+      const fee = await getMatchFee(mappedPlayer.matchFeeBand);
+      if (!mappedPlayer.email || mappedPlayer.email.length === 0) {
+        logger.error(`Player ${p.name} has no email address`);
+        errors += 1;
+      } else {
+        p.fee = fee;
+        p.email = mappedPlayer.email;
+      }
+    }
+  }
+  return { players, errors };
 };
 
 export const sendDraftInvoice = async (invoiceId: string) => {
   const inv = await getInvoiceSingleton(clientId, secret, sandbox);
   logger.debug(`Sending invoice ${invoiceId}`);
   await inv.send(invoiceId);
-  logger.info(`Invoice ${invoiceId} sent`);
 };
 
 const createInvoices = async (
@@ -45,8 +76,9 @@ const createInvoices = async (
 ) => {
   const inv = await getInvoiceSingleton(clientId, secret, sandbox);
   for (const player of players) {
-    const fee: MatchFeeType = feeTypes[player.feeType];
-
+    const fee: MatchFeeType = player.fee;
+    const match =
+      `${player.date} - ${player.team} ${player.venue} v ${player.oppo}`;
     let note =
       "If you have any queries over the amount you've been charged, please contact us. ";
 
@@ -56,7 +88,7 @@ const createInvoices = async (
         *** There is no balance on this invoice so no action is required by you. ***`;
       } else {
         logger.info(
-          `Zero fee - ${player.name} - ${player.match} - ${fee.description}`,
+          `Zero fee - ${player.name} - ${match} - ${fee.description}`,
         );
         continue;
       }
@@ -78,37 +110,31 @@ const createInvoices = async (
       fees: [{
         name: player.name,
         date: new Date(),
-        description: player.match,
+        description: match,
         type: fee,
       }],
     };
     if (dryRun) {
       logger.info(
-        `Dry run. Would send: ${player.name} - ${player.match} - ${fee.description} - ${fee.currency} ${fee.value}`,
+        `Dry run. Would send: ${player.name} - ${match} - ${fee.description} - ${fee.currency} ${fee.value}`,
       );
     } else {
       const response = await inv.generate(invObj);
-      logger.info(`Invoice sent to ${player.name}`);
+      logger.info("-----------------------------------");
       logger.debug(response);
       logger.debug(JSON.stringify(response));
       const responseHrefParts = response.href.split("/");
       const createdId = responseHrefParts[responseHrefParts.length - 1];
-      logger.info(`${createdId} created`);
+      logger.info(`Invoice ID created: ${createdId}`);
+      logger.info(
+        `Detail - ${player.name} - ${match} - ${fee.description} - ${fee.currency} ${fee.value}`,
+      );
       if (autoSend) {
         await sendDraftInvoice(createdId);
         logger.info(`${createdId} sent`);
       }
     }
   }
-};
-
-const getRegister = async () => {
-  const sheetId = config.register.sheet.sheetId;
-  const tabName = config.register.sheet.tabName;
-  const doc = await getDoc(sheetId);
-  const sheet = await getSheetByTitle(tabName, doc);
-  const players = await getRegisterFromSheet(sheet);
-  return players;
 };
 
 const getTemplates = async () => {
@@ -137,6 +163,7 @@ const deleteInvoice = async (invoiceId: string) => {
 };
 
 export const produceInvoices = async (
+  players: MatchPlayer[],
   dryRun: boolean = false,
   autoSend: boolean = true,
 ) => {
@@ -150,7 +177,6 @@ export const produceInvoices = async (
       );
     }
   }
-  const players = await getRegister();
   await createInvoices(players, config.fees.sendZeroInvoices, autoSend, dryRun);
 };
 
@@ -161,4 +187,8 @@ export const owedInvoices = async () => {
   const invoices = await inv.search({ status: ["SENT"] });
   logger.info(`Found ${invoices.items.length}`);
   return invoices.items;
+};
+
+export const feeKeyExists = (key: string, feeTypes: FeeTypes) => {
+  return Object.keys(feeTypes).includes(key);
 };
