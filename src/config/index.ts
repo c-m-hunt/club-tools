@@ -5,7 +5,7 @@ import logger from "logger";
 
 export { FeeTypes, Config, Sheet } from "./types";
 
-if (process.env["ENV"] == "PROD") {
+if (process.env["PRODUCTION"]) {
   logger.info("RUNNING LIVE CONFIG");
   dotenv.config({ path: "./.env.prod" });
 } else {

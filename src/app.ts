@@ -1,31 +1,20 @@
-import { produceInvoices } from "club/subs";
-import { getAvailability } from "./club/availability";
-
-import { sendToSlack } from "lib/slack";
-import { invoicesList } from "lib/slackCommands/messageCreator";
-
+import { getAvailability } from "club/availability";
 import { Client } from "play-cricket-client";
-
-import { searchMembers } from "./club/mailingList/mailchimp";
 
 import { program } from "commander";
 import { config } from "config";
 import logger from "logger";
-import fs from "fs";
 import {
   importMembers,
   exportToSpreadsheet,
   updateMembersFromSpreadsheet,
-  importFromSpreadsheet,
 } from "club/members/ops";
 import { getDoc, getSheetByTitle } from "lib/googleSheets/sheets";
-import { getRegisterFromSheet } from "club/registerSheet";
-import { searchNames } from "lib/clubDb/search";
 import { connect, disconnect } from "lib/clubDb";
-import { ResultSummaryResponse } from "play-cricket-client/dist/lib/interface/resultSummary";
 import { financeListImport, chargeSubs, owedInvoices } from "cli";
+import { searchMembers } from "cli/index";
 
-program.version("0.1.0");
+program.version("0.2.0");
 async function main() {
   program
     .command("availability")
@@ -36,17 +25,6 @@ async function main() {
         (a) => (a.availability.includes(cmd.date)),
       ).map((a) => a.name);
       console.log(available);
-    });
-
-  program
-    .command("sendinvoices")
-    .option("-d, --dryrun", "dry run for invoice sending")
-    .option(
-      "-s --send",
-      "will send the invoices. If not set, will only create draft",
-    )
-    .action(async (cmd) => {
-      await produceInvoices(cmd.dryrun, cmd.send);
     });
 
   program
@@ -98,12 +76,7 @@ async function main() {
 
   program
     .command("searchmember <searchText>")
-    .action(async (searchText: string) => {
-      connect();
-      const members = await searchNames(searchText);
-      console.log(members);
-      disconnect();
-    });
+    .action(searchMembers);
 
   program
     .command("chargesubs")

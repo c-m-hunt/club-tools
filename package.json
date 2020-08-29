@@ -15,7 +15,7 @@
         "lint": "tsc --noEmit && eslint \"**/*.{js,ts}\" --quiet --fix",
         "test": "jest --forceExit --coverage --verbose",
         "build": "tsc -p ./tsconfig.json",
-        "run:prod": "node -r ./tsconfig-paths-bootstrap.js dist/app.js",
+        "run:prod": "PRODUCTION=1 node -r ./tsconfig-paths-bootstrap.js dist/app.js",
         "import-members": "ts-node src/club/members/import.ts"
     },
     "dependencies": {
