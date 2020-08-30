@@ -94,7 +94,7 @@ const createInvoices = async (
       }
     }
     const invObj: InvoiceOptions = {
-      dueDate: moment().add(14, "days").toDate(),
+      dueDate: moment().add(5, "days").toDate(),
       note,
       currency: GBP,
       recipient: {

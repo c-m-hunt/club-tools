@@ -61,17 +61,20 @@ export const chargeSubs = async () => {
   } else {
     const answers3 = await inquirer.prompt([
       {
-        type: "list",
-        name: "dry_run",
-        message: "Would you like to run a dry run first?",
-        choices: [
-          { name: "No - send the invoices", value: false },
-          { name: "Yes - run a dry run and show output", value: true },
-        ],
+        type: "checkbox",
+        name: "selected_players",
+        pageSize: 15,
+        message: "Select players to charge?",
+        choices: players.map((p) => ({
+          name:
+            `${p.name} - ${p.fee.description} - ${p.fee.currency} ${p.fee.value}`,
+          value: p,
+          checked: true,
+        })),
       },
     ]);
-    const dryRun = answers3["dry_run"];
-    await produceInvoices(players, dryRun, true);
+    const playersToInvoice = answers3["selected_players"];
+    await produceInvoices(playersToInvoice, true, true);
   }
   disconnect();
 };
@@ -92,7 +95,9 @@ export const owedInvoices = async () => {
   tableList.push(...trimmedInvoices.map((i: any) => Object.values(i)));
   console.log(tableList.toString());
 
-  const playerOwing: any = {};
+  type PlayersOwing = { [key: string]: { amount: number; count: number } };
+
+  const playerOwing: PlayersOwing = {};
   for (const i of trimmedInvoices) {
     if (!Object.keys(playerOwing).includes(i.recipient)) {
       playerOwing[i.recipient] = {
@@ -115,4 +120,10 @@ export const owedInvoices = async () => {
     ])),
   );
   console.log(tablePlayers.toString());
+
+  console.log(
+    `TOTAL OUTSTANDING: GBP ${
+      Object.values(playerOwing).reduce((a, b) => a + b.amount, 0)
+    }`,
+  );
 };
