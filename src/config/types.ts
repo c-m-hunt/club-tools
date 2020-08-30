@@ -34,9 +34,6 @@ export interface Config {
   availability: {
     sheet: Sheet;
   };
-  register: {
-    sheet: Sheet;
-  };
   fees: {
     feeTypes: FeeTypes;
     sendZeroInvoices: boolean;

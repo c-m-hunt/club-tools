@@ -20,12 +20,6 @@ export const config: Config = {
       tabName: process.env.AVAILABILITY_TAB_NAME,
     },
   },
-  register: {
-    sheet: {
-      sheetId: process.env.REGISTER_SHEET_ID,
-      tabName: process.env.REGISTER_TAB_NAME,
-    },
-  },
   fees: {
     feeTypes,
     sendZeroInvoices: false,

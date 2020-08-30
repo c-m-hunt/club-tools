@@ -25,7 +25,7 @@ export class Invoice extends PayPal {
 
   search = async (searchCritera: object) => {
     return await this.request(
-      "/invoicing/search-invoices",
+      "/invoicing/search-invoices?page_size=100",
       "POST",
       searchCritera,
     );
