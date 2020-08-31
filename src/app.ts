@@ -39,43 +39,43 @@ async function main() {
       console.log(div);
     });
 
-  program
-    .command("mailinglistimport")
-    .action(async () => {
-      const members = await importMembers();
-      console.log(members);
-    });
+  // program
+  //   .command("mailinglistimport")
+  //   .action(async () => {
+  //     const members = await importMembers();
+  //     console.log(members);
+  //   });
 
   program
     .command("financeimport")
     .action(financeListImport);
 
-  program
-    .command("export")
-    .action(async () => {
-      connect();
-      const sheetId = config.clubDb.exportSheet.sheetId;
-      const tabName = config.clubDb.exportSheet.tabName;
-      const doc = await getDoc(sheetId);
-      const sheet = await getSheetByTitle(tabName, doc);
-      await exportToSpreadsheet(sheet);
-      disconnect();
-    });
+  // program
+  //   .command("export")
+  //   .action(async () => {
+  //     connect();
+  //     const sheetId = config.clubDb.exportSheet.sheetId;
+  //     const tabName = config.clubDb.exportSheet.tabName;
+  //     const doc = await getDoc(sheetId);
+  //     const sheet = await getSheetByTitle(tabName, doc);
+  //     await exportToSpreadsheet(sheet);
+  //     disconnect();
+  //   });
+
+  // program
+  //   .command("update")
+  //   .action(async () => {
+  //     connect();
+  //     const sheetId = config.clubDb.exportSheet.sheetId;
+  //     const tabName = config.clubDb.exportSheet.tabName;
+  //     const doc = await getDoc(sheetId);
+  //     const sheet = await getSheetByTitle(tabName, doc);
+  //     await updateMembersFromSpreadsheet(sheet);
+  //     disconnect();
+  //   });
 
   program
-    .command("update")
-    .action(async () => {
-      connect();
-      const sheetId = config.clubDb.exportSheet.sheetId;
-      const tabName = config.clubDb.exportSheet.tabName;
-      const doc = await getDoc(sheetId);
-      const sheet = await getSheetByTitle(tabName, doc);
-      await updateMembersFromSpreadsheet(sheet);
-      disconnect();
-    });
-
-  program
-    .command("searchmember <searchText>")
+    .command("search <searchText>")
     .action(searchMembers);
 
   program
