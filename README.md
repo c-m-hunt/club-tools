@@ -1,3 +1,5 @@
+![Build status](https://github.com/c-m-hunt/club-tools/workflows/Build/badge.svg)
+
 # Club Tools (`ct`)
 
 ## Overview
