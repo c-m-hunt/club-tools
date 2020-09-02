@@ -1,4 +1,4 @@
-import { prop, index } from "@typegoose/typegoose";
+import { prop, index, Ref } from "@typegoose/typegoose";
 import { GoogleSpreadsheetRow } from "google-spreadsheet";
 
 export class ExternalMapping {
@@ -6,6 +6,18 @@ export class ExternalMapping {
   mailchimpId?: string;
   @prop({ unique: true })
   playCricketId?: string;
+}
+
+@index({ "bandCode": 1 })
+export class FeeBand {
+  @prop({ unique: true })
+  bandCode: string;
+  @prop()
+  description: string;
+  @prop()
+  currency: string;
+  @prop()
+  amount: number;
 }
 
 @index({ "externalMapping.playCricketId": 1 })
@@ -21,8 +33,12 @@ export class Member {
   phone?: string;
   @prop()
   email?: string;
-  @prop({ type: String })
-  matchFeeBand?: string;
+  @prop({
+    ref: FeeBand,
+    foreignField: "matchFeeBand",
+    localField: "bandCode",
+  })
+  matchFeeBand?: Ref<FeeBand>;
   @prop({ _id: false })
   externalMapping?: ExternalMapping;
   @prop({ type: String })

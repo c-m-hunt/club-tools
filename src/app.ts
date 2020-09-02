@@ -35,6 +35,20 @@ async function main() {
     .description("charge subs for selected matches")
     .action(chargeSubs);
 
+  program
+    .command("feebands")
+    .description("display the fee bands")
+    .action(() => {
+      throw new Error("This method isn't currently implemented");
+    });
+
+  program
+    .command("insertfeeband")
+    .description("inserts a new fee band")
+    .action(() => {
+      throw new Error("This method isn't currently implemented");
+    });
+
   await program.parseAsync(process.argv);
 }
 main();
