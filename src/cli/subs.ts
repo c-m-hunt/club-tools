@@ -91,8 +91,15 @@ export const owedInvoices = async () => {
       recipient: i.primary_recipients[0].billing_info.email_address,
     };
   });
-  const tableList = new Table();
-  tableList.push(...trimmedInvoices.map((i: any) => Object.values(i)));
+  const tableList = new Table(
+    {
+      head: ["Invoice ID", "Date", "Curr", "Amount", "Read", "Email"],
+      chars: { "mid": "", "left-mid": "", "mid-mid": "", "right-mid": "" },
+    },
+  );
+  tableList.push(
+    ...trimmedInvoices.reverse().map((i: any) => Object.values(i)),
+  );
   console.log(tableList.toString());
 
   type PlayersOwing = { [key: string]: { amount: number; count: number } };
@@ -109,7 +116,16 @@ export const owedInvoices = async () => {
     playerOwing[i.recipient].count += 1;
   }
 
-  const tablePlayers = new Table();
+  const tablePlayers = new Table(
+    {
+      head: [
+        "Email",
+        "Count",
+        "Total",
+      ],
+      chars: { "mid": "", "left-mid": "", "mid-mid": "", "right-mid": "" },
+    },
+  );
   tablePlayers.push(
     ...Object.keys(playerOwing).map((
       k,

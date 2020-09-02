@@ -45,6 +45,7 @@ export interface Config {
       apiKey: string;
       siteId: number;
       teams: string[];
+      divisions: string[];
     };
   };
   communication: {

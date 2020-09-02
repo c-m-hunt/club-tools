@@ -41,6 +41,7 @@ export const config: Config = {
       apiKey: process.env["PLAY_CRICKET_API_KEY"],
       siteId: parseInt(process.env["PLAY_CRICKET_SITE_ID"]),
       teams: process.env["PLAY_CRICKET_TEAMS"].split(","),
+      divisions: process.env["PLAY_CRICKET_DIVISIONS"].split(","),
     },
   },
   communication: {
