@@ -1,5 +1,24 @@
 # Club Tools (`ct`)
 
+## Overview
+Building a library of functionality to help run a cricket club.
+
+Current functionality:
+* Search members
+* Edit members 
+* Send invoices for match subs
+* View owed match subs
+* View current league tables
+
+## Requirements
+* Play Cricket API access
+* MongoDB access
+* PayPal account with API configured
+
+## Optional
+* Slack Webhook (for notifications)
+* MailChimp API key (for syncing members with mailing list)
+
 ## Setup
 Create a file called `.env` and `.env.prod` in the root of the application. Add the following lines and sub in all of the fields:
 ```
@@ -35,11 +54,11 @@ yarn build
 ## Install
 Install on MacOS. Builds and copies executable to `/usr/local/bin`.
 ```
-yarn run install
+yarn install:ct
 ```
 
 Run from code on other platforms, replace `ct` with `yarn run:prod` after building.
- 
+
 ## Functionality
 
 ### Help
@@ -63,6 +82,12 @@ You will then be presented with a number of days to select matches from. General
 Then select the match you wish to charge subs for. The app will map the scorecard from Play Cricket against the fee band in the database. To be charged subs, a player must have an email address and a fee band. Errors will be shown at this point if players can't be charged.
 
 You will be shown a list of all players and their fees. All will be selected. If you do not want to charge all, follow the on-screen instructions on how to unselect.
+
+### List unpaid subs
+```
+ct owing
+```
+Will display a list of owed match subs and a summary of how much each member owes.
 
 ## Todo
 * Add new members
