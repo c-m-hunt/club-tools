@@ -1,0 +1,3 @@
+#!/bin/bash
+export PRODUCTION=1
+(cd {{path}} && node -r ./tsconfig-paths-bootstrap.js ./dist/app.js $@)

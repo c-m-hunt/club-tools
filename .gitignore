@@ -40,3 +40,5 @@ dist/**/*
 notes.txt
 
 .env*
+
+ct

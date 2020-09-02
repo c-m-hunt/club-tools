@@ -1,30 +1,71 @@
-# Club tools
+# Club Tools (`ct`)
 
-## Availability
+## Setup
+Create a file called `.env` and `.env.prod` in the root of the application. Add the following lines and sub in all of the fields:
+```
+PAYPAL_CLIENT_ID=xxxxxxx
+PAYPAL_SECRET=xxxxxxx
+PAYPAL_SANDBOX=0
+PAYPAL_INVOICER_BUSINESS=My Club Name
+PAYPAL_INVOICER_CONTACT=My Treasurer's name
+PAYPAL_INVOICER_EMAIL=treasurer@club.com
+PAYPAL_INVOICER_LOGO=https://link_to_logo
 
+SLACK_FINAANCES_WEBHOOK=http://link/to/slack/webhook
+SLACK_COMMAND_TOKEN=SLACK_COMMAND_TOKEN
 
-## Send invoices
-### Setup
+PLAY_CRICKET_API_KEY=xxxxx
+PLAY_CRICKET_SITE_ID=1234
+PLAY_CRICKET_TEAMS=123,145,1232,6234
+PLAY_CRICKET_DIVISIONS=235,74563
 
-### Spreadsheets
-* Match register - https://docs.google.com/spreadsheets/d/1AXv67zQf-lgleOlb4GOr0uwbebWpdYF5axw0Yj-w9fc/edit#gid=36464533
-* 100 Club - https://docs.google.com/spreadsheets/d/1UptLUId9YIcORHHlubzcIDEZGnaiZ9UR9rZt3dAfqro/edit#gid=1593497722
+MAILCHIMP_API_KEY=xxxxx
+MAILCHIMP_LIST_ID=xxxx
 
-### To crete draft invoices
-These are generated from contact forms at the moment.
-* Open each contact form and output to a spreadsheet tab
-* Copy the register to the `To invoice` tab
-* Add the match and date columns in the format `A Team, Home vs Whoever` and `2020-07-20`
-* Mark sub type with:
-  * `A` - Adult
-  * `A1` - Adult with one 100 Club number. Replace with 2 or 3 for more.
-  * `S` - Student
-  * `Y` - Youth
-* Run `yarn start sendinvoices -d` to do a dry run and check output
-* Run `yarn start sendinvoices` to create draft invoices
-* Run `yarn start sendinvoices -s` to create and send invoices
-* Check PayPal UI and send invoices
-* In spreadsheet, move players from `To invoice` tab to `Historical register` tab
+CLUB_DB_CONNECTION=mongodb://localhost:27017/admin
+CLUB_DB_NAME=clubname
+```
 
-### TODO
-* Allow to send draft invoices
+The main difference between `.env` and `.env.prod` should be the `PAYPAL_SANDBOX` value should be 1 on `.env`. This allows you to test.
+
+## Build
+```
+yarn build
+```
+## Install
+Install on MacOS. Builds and copies executable to `/usr/local/bin`.
+```
+yarn run install
+```
+
+Run from code on other platforms, replace `ct` with `yarn run:prod` after building.
+ 
+## Functionality
+
+### Help
+```
+ct help
+```
+Displays available commands and options
+
+### Search and edit members
+```
+ct search <surname>
+```
+A list of members are displayed. You can then select a member to edit.
+
+### Send invoices
+```
+ct subs
+```
+You will then be presented with a number of days to select matches from. Generally, the default 6 is sufficient.
+
+Then select the match you wish to charge subs for. The app will map the scorecard from Play Cricket against the fee band in the database. To be charged subs, a player must have an email address and a fee band. Errors will be shown at this point if players can't be charged.
+
+You will be shown a list of all players and their fees. All will be selected. If you do not want to charge all, follow the on-screen instructions on how to unselect.
+
+## Todo
+* Add new members
+* Move fee bands out of code and in to database
+* Display all member fee bands
+* Web front end (but need more motivation to do this. CLI works fine for my needs.)
