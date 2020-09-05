@@ -2,17 +2,17 @@ export interface MatchFee {
   name: string;
   date: Date;
   description: string;
-  type: MatchFeeType;
+  type: FeeBand;
 }
 
-export interface MatchFeeType {
+export interface FeeBand {
   description: string;
-  value: number;
+  amount: number;
   currency: "GBP";
 }
 
 export interface FeeTypes {
-  [key: string]: MatchFeeType;
+  [key: string]: FeeBand;
 }
 
 export interface MatchPlayer {
@@ -24,5 +24,5 @@ export interface MatchPlayer {
   venue: "Home" | "Away";
   date: string;
   email?: string;
-  fee?: MatchFeeType;
+  fee?: FeeBand;
 }

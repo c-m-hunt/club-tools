@@ -1,6 +1,6 @@
 import { program } from "commander";
 import { config } from "config";
-import { financeListImport, chargeSubs, owedInvoices } from "cli";
+import { financeListImport, chargeSubs, owedInvoices, feeBands } from "cli";
 import { searchMembers } from "cli/index";
 import { leagueTables } from "cli/cricket";
 
@@ -38,16 +38,7 @@ async function main() {
   program
     .command("feebands")
     .description("display the fee bands")
-    .action(() => {
-      throw new Error("This method isn't currently implemented");
-    });
-
-  program
-    .command("insertfeeband")
-    .description("inserts a new fee band")
-    .action(() => {
-      throw new Error("This method isn't currently implemented");
-    });
+    .action(feeBands);
 
   await program.parseAsync(process.argv);
 }

@@ -1,5 +1,6 @@
-import { prop, index, Ref } from "@typegoose/typegoose";
+import { prop, index, Ref, modelOptions } from "@typegoose/typegoose";
 import { GoogleSpreadsheetRow } from "google-spreadsheet";
+import { FeeBand as IFeeBand } from "club/feeTypes";
 
 export class ExternalMapping {
   @prop()
@@ -10,18 +11,23 @@ export class ExternalMapping {
 
 @index({ "bandCode": 1 })
 export class FeeBand {
-  @prop({ unique: true })
   bandCode: string;
   @prop()
   description: string;
-  @prop()
-  currency: string;
+  @prop({ type: String })
+  currency: "GBP";
   @prop()
   amount: number;
 }
 
 @index({ "externalMapping.playCricketId": 1 })
 @index({ firstName: "text", lastName: "text" })
+@modelOptions({
+  schemaOptions: {
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  },
+})
 export class Member {
   @prop({ required: true })
   firstName: string;
@@ -33,12 +39,15 @@ export class Member {
   phone?: string;
   @prop()
   email?: string;
+  @prop()
+  matchFeeBand?: string;
   @prop({
     ref: FeeBand,
-    foreignField: "matchFeeBand",
-    localField: "bandCode",
+    foreignField: "bandCode",
+    localField: "matchFeeBand",
+    justOne: true,
   })
-  matchFeeBand?: Ref<FeeBand>;
+  matchFeeDetails?: Ref<FeeBand>;
   @prop({ _id: false })
   externalMapping?: ExternalMapping;
   @prop({ type: String })

@@ -49,14 +49,16 @@ export const getPlayersAndFeesForMatch = async (
     // Only do the checks on player and fees if there have been no errors so far
     if (errors === 0) {
       const mappedPlayer = mappedPlayerResponse[0];
-      if (!Object.keys(feeTypes).includes(mappedPlayer.matchFeeBand)) {
+      if (
+        !Object.keys(feeTypes).includes(mappedPlayer.matchFeeBand)
+      ) {
         logger.error(
           `Player ${p.name} has fee band ${mappedPlayer.matchFeeBand} which doesn't exist`,
         );
         errors += 1;
       }
 
-      const fee = await getMatchFee(mappedPlayer.matchFeeBand);
+      const fee = mappedPlayer.matchFeeDetails;
       if (!mappedPlayer.email || mappedPlayer.email.length === 0) {
         logger.error(`Player ${p.name} has no email address`);
         errors += 1;
