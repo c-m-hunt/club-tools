@@ -10,6 +10,8 @@ import {
 } from "club/subs";
 import { getRecentMatches } from "club/matches";
 import logger from "logger";
+import { insertFeeBand } from "lib/clubDb/fees";
+import { getMembers } from "lib/clubDb/query";
 
 export const chargeSubs = async () => {
   connect();
@@ -67,14 +69,14 @@ export const chargeSubs = async () => {
         message: "Select players to charge?",
         choices: players.map((p) => ({
           name:
-            `${p.name} - ${p.fee.description} - ${p.fee.currency} ${p.fee.value}`,
+            `${p.name} - ${p.fee.description} - ${p.fee.currency} ${p.fee.amount}`,
           value: p,
           checked: true,
         })),
       },
     ]);
     const playersToInvoice = answers3["selected_players"];
-    await produceInvoices(playersToInvoice, true, true);
+    await produceInvoices(playersToInvoice, false, true);
   }
   disconnect();
 };
@@ -142,4 +144,11 @@ export const owedInvoices = async () => {
       Object.values(playerOwing).reduce((a, b) => a + b.amount, 0)
     }`,
   );
+};
+
+export const feeBands = async () => {
+  connect();
+  const members = await getMembers();
+  console.log(members[0]);
+  disconnect();
 };

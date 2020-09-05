@@ -5,14 +5,7 @@ import { config } from "config";
 import { getModelForClass, ReturnModelType } from "@typegoose/typegoose";
 import logger from "logger";
 
-let MemberModel: null | ReturnModelType<typeof Member> = null;
-export const getMembmerModel = () => {
-  if (MemberModel) {
-    return MemberModel;
-  }
-  MemberModel = getModelForClass(Member);
-  return MemberModel;
-};
+import { MemberModel } from "./models";
 
 export const connect = async () => {
   await mongoose.connect(
@@ -27,7 +20,6 @@ export const connect = async () => {
 };
 
 export const insertMember = async (member: Member) => {
-  const MemberModel = getMembmerModel();
   const createdMember = await MemberModel.create(member);
   return createdMember._id;
 };
@@ -35,7 +27,6 @@ export const insertMember = async (member: Member) => {
 export const updateMembersByPlayCricketId = async (
   members: Partial<Member>[],
 ) => {
-  const MemberModel = getMembmerModel();
   const bulk = MemberModel.collection.initializeUnorderedBulkOp();
   for (const m of members) {
     if (m.externalMapping.playCricketId) {
@@ -55,7 +46,6 @@ export const updateMembersByPlayCricketId = async (
 };
 
 export const updateMembersById = async (members: Partial<MemberDB>[]) => {
-  const MemberModel = getMembmerModel();
   const bulk = MemberModel.collection.initializeUnorderedBulkOp();
   for (const m of members) {
     if (m._id) {
