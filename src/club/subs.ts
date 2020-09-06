@@ -26,6 +26,13 @@ export const getPlayersAndFeesForMatch = async (
   const players = await getPlayers(matchId, chargeTeams);
   let errors = 0;
   for (const p of players) {
+    if (p.playerId === null) {
+      logger.error(
+        `Player ${p.name} does not have a Play Cricket ID. Please fix and rerun.`,
+      );
+      errors += 1;
+      break;
+    }
     const mappedPlayerResponse = await getPlayerByPlayCricketId(p.playerId);
     if (mappedPlayerResponse.length == 0) {
       logger.error(

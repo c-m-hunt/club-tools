@@ -74,7 +74,7 @@ export const chargeSubs = async () => {
       },
     ]);
     const playersToInvoice = answers3["selected_players"];
-    await produceInvoices(playersToInvoice, true, true);
+    await produceInvoices(playersToInvoice, false, true);
   }
   disconnect();
 };
