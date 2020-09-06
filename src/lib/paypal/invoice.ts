@@ -85,7 +85,7 @@ export class Invoice extends PayPal {
         quantity: 1,
         unit_amount: {
           currency_code: options.currency,
-          value: fee.type.value,
+          value: fee.type.amount,
         },
         unit_of_measure: "AMOUNT",
       })),
