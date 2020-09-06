@@ -13,5 +13,6 @@ export const getPlayerByPlayCricketId = async (
   return await MemberModel.find(
     { "externalMapping.playCricketId": id.toString() },
   )
+    .populate("matchFeeDetails")
     .exec();
 };

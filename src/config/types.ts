@@ -1,7 +1,7 @@
 export interface FeeTypes {
   [key: string]: {
     description: string;
-    value: number;
+    amount: number;
     currency: "GBP";
   };
 }
@@ -35,7 +35,6 @@ export interface Config {
     sheet: Sheet;
   };
   fees: {
-    feeTypes: FeeTypes;
     sendZeroInvoices: boolean;
     slackWebhookUrl: string;
     invoiceParams: PayPalInvoiceParams;

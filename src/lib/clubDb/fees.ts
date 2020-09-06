@@ -3,6 +3,9 @@ import { FeeBandModel } from "./models";
 
 export const insertFeeBand = async (feeBand: FeeBand) => {
   const createdFeeBand = await FeeBandModel.create(feeBand);
-  console.log(createdFeeBand);
   return createdFeeBand._id;
+};
+
+export const getFeeBands = async () => {
+  return await FeeBandModel.find();
 };

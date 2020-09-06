@@ -5,19 +5,13 @@ import {
   getInvoiceSingleton,
 } from "lib/paypal/invoice";
 import { GBP } from "consts";
-import { MatchPlayer, MatchFeeType, FeeTypes } from "./feeTypes";
+import { MatchPlayer, FeeBand, FeeTypes } from "./feeTypes";
 import { config } from "config";
 import logger from "logger";
 import { getPlayers } from "./matches";
 import { getPlayerByPlayCricketId } from "lib/clubDb/query";
 
-const feeTypes = config.fees.feeTypes;
-
 const { clientId, secret, sandbox, invoiceer } = config.fees.invoiceParams;
-
-export const getMatchFee = async (feeCode: string) => {
-  return feeTypes[feeCode];
-};
 
 export const getPlayersAndFeesForMatch = async (
   matchId: number,
@@ -50,7 +44,7 @@ export const getPlayersAndFeesForMatch = async (
     if (errors === 0) {
       const mappedPlayer = mappedPlayerResponse[0];
       if (
-        !Object.keys(feeTypes).includes(mappedPlayer.matchFeeBand)
+        !mappedPlayer.matchFeeDetails
       ) {
         logger.error(
           `Player ${p.name} has fee band ${mappedPlayer.matchFeeBand} which doesn't exist`,
@@ -58,7 +52,7 @@ export const getPlayersAndFeesForMatch = async (
         errors += 1;
       }
 
-      const fee = mappedPlayer.matchFeeDetails;
+      const fee = mappedPlayer.matchFeeDetails as FeeBand;
       if (!mappedPlayer.email || mappedPlayer.email.length === 0) {
         logger.error(`Player ${p.name} has no email address`);
         errors += 1;
@@ -85,13 +79,13 @@ const createInvoices = async (
 ) => {
   const inv = await getInvoiceSingleton(clientId, secret, sandbox);
   for (const player of players) {
-    const fee: MatchFeeType = player.fee;
+    const fee: FeeBand = player.fee;
     const match =
       `${player.date} - ${player.team} ${player.venue} v ${player.oppo}`;
     let note =
       "If you have any queries over the amount you've been charged, please contact us. ";
 
-    if (fee.value == 0) {
+    if (fee.amount == 0) {
       if (sendZeroInvoices) {
         note += `
         *** There is no balance on this invoice so no action is required by you. ***`;
@@ -125,7 +119,7 @@ const createInvoices = async (
     };
     if (dryRun) {
       logger.info(
-        `Dry run. Would send: ${player.name} - ${match} - ${fee.description} - ${fee.currency} ${fee.value}`,
+        `Dry run. Would send: ${player.name} - ${match} - ${fee.description} - ${fee.currency} ${fee.amount}`,
       );
     } else {
       const response = await inv.generate(invObj);
@@ -136,7 +130,7 @@ const createInvoices = async (
       const createdId = responseHrefParts[responseHrefParts.length - 1];
       logger.info(`Invoice ID created: ${createdId}`);
       logger.info(
-        `Detail - ${player.name} - ${match} - ${fee.description} - ${fee.currency} ${fee.value}`,
+        `Detail - ${player.name} - ${match} - ${fee.description} - ${fee.currency} ${fee.amount}`,
       );
       if (autoSend) {
         await sendDraftInvoice(createdId);
@@ -196,8 +190,4 @@ export const owedInvoices = async () => {
   const invoices = await inv.search({ status: ["SENT"] });
   logger.info(`Found ${invoices.items.length}`);
   return invoices.items;
-};
-
-export const feeKeyExists = (key: string, feeTypes: FeeTypes) => {
-  return Object.keys(feeTypes).includes(key);
 };

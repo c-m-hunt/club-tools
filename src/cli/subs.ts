@@ -10,8 +10,10 @@ import {
 } from "club/subs";
 import { getRecentMatches } from "club/matches";
 import logger from "logger";
-import { insertFeeBand } from "lib/clubDb/fees";
+import { insertFeeBand, getFeeBands } from "lib/clubDb/fees";
 import { getMembers } from "lib/clubDb/query";
+import { MatchFee } from "club/feeTypes";
+import { FeeBand } from "lib/clubDb/types";
 
 export const chargeSubs = async () => {
   connect();
@@ -149,7 +151,73 @@ export const owedInvoices = async () => {
 
 export const feeBands = async () => {
   connect();
-  const members = await getMembers();
-  console.log(members[0]);
+  const feeBands = await getFeeBands();
+  const tableFees = new Table(
+    {
+      head: [
+        "Code",
+        "Name",
+        "Amount",
+      ],
+      chars: { "mid": "", "left-mid": "", "mid-mid": "", "right-mid": "" },
+    },
+  );
+  tableFees.push(...feeBands.map((f) => {
+    const fee = f.toObject();
+    return [
+      fee.bandCode,
+      fee.description,
+      `${fee.currency} ${fee.amount}`,
+    ];
+  }));
+
+  console.log(tableFees.toString());
+  disconnect();
+};
+
+export const addFeeBand = async () => {
+  connect();
+  const feeBands = await getFeeBands();
+  const feeBandCodes = feeBands.map((f) => f.bandCode);
+  const answers = await inquirer.prompt([
+    {
+      type: "string",
+      name: "code",
+      message: "Enter a code for the fee band",
+      validate: (val) => {
+        if (feeBandCodes.includes(val)) {
+          return "Fee band code already exists. Please try again.";
+        }
+        if (val.length >= 3) {
+          return "Please ensure the code is less than three characters";
+        }
+        return true;
+      },
+    },
+    {
+      type: "string",
+      name: "description",
+      message: "Enter a description for the fee band",
+      validate: (val) => {
+        if (val.length >= 4) {
+          return true;
+        }
+        return "Please enter a valid fee band description";
+      },
+    },
+    {
+      type: "number",
+      name: "amount",
+      message: "Enter an amount for the fee band",
+    },
+  ]);
+  const fee: FeeBand = {
+    amount: answers["amount"],
+    description: answers["description"],
+    currency: "GBP",
+    bandCode: answers["code"],
+  };
+  const id = await insertFeeBand(fee);
+  console.log(`Fee band inserted as id ${id}`);
   disconnect();
 };

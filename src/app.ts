@@ -1,6 +1,12 @@
 import { program } from "commander";
 import { config } from "config";
-import { financeListImport, chargeSubs, owedInvoices, feeBands } from "cli";
+import {
+  financeListImport,
+  chargeSubs,
+  owedInvoices,
+  feeBands,
+  addFeeBand,
+} from "cli";
 import { searchMembers } from "cli/index";
 import { leagueTables } from "cli/cricket";
 
@@ -39,6 +45,11 @@ async function main() {
     .command("feebands")
     .description("display the fee bands")
     .action(feeBands);
+
+  program
+    .command("addfeeband")
+    .description("add a fee band")
+    .action(addFeeBand);
 
   await program.parseAsync(process.argv);
 }

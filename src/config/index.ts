@@ -1,6 +1,5 @@
 import dotenv from "dotenv";
 import { Config } from "./types";
-import { feeTypes } from "./fees";
 import logger from "logger";
 
 export { FeeTypes, Config, Sheet } from "./types";
@@ -21,7 +20,6 @@ export const config: Config = {
     },
   },
   fees: {
-    feeTypes,
     sendZeroInvoices: false,
     slackWebhookUrl: process.env.SLACK_FINAANCES_WEBHOOK,
     invoiceParams: {

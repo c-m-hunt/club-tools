@@ -19,14 +19,14 @@ import {
 import logger from "logger";
 import { config } from "config";
 import moment from "moment";
-import { feeTypes } from "config/fees";
-import { feeKeyExists } from "club/subs";
+import { getFeeBands } from "lib/clubDb/fees";
 
 export const importFromSpreadsheet = async (
   sheet: GoogleSpreadsheetWorksheet,
 ) => {
   await connect();
-
+  const feeBands = await getFeeBands();
+  const feeBandCodes = feeBands.map((f) => f.bandCode);
   const rows = await sheet.getRows({ offset: 0, limit: 500 });
   const members: Member[] = rows.map((row) => {
     return {
@@ -38,7 +38,7 @@ export const importFromSpreadsheet = async (
       externalMapping: {
         playCricketId: row._rawData[3] as string,
       },
-      matchFeeBand: row._rawData[5] && feeKeyExists(row._rawData[5], feeTypes)
+      matchFeeBand: row._rawData[5] && feeBandCodes.includes(row._rawData[5])
         ? row._rawData[5]
         : null,
       email: row._rawData[4] as string,

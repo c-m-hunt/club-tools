@@ -11,6 +11,7 @@ export class ExternalMapping {
 
 @index({ "bandCode": 1 })
 export class FeeBand {
+  @prop()
   bandCode: string;
   @prop()
   description: string;
