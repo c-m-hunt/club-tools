@@ -88,7 +88,8 @@ export const owedInvoices = async () => {
       currency: i.due_amount.currency_code,
       amount: i.due_amount.value,
       viewed: i.detail.viewed_by_recipient,
-      recipient: i.primary_recipients[0].billing_info.email_address,
+      recipient: i.primary_recipients[0].billing_info.email_address
+        .toLowerCase(),
     };
   });
   const tableList = new Table(
