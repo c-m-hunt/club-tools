@@ -189,5 +189,31 @@ export const owedInvoices = async () => {
   logger.info("Authorised. Getting unpaid invoices");
   const invoices = await inv.search({ status: ["SENT"] });
   logger.info(`Found ${invoices.items.length}`);
-  return invoices.items;
+
+  const trimmedInvoices = invoices.items.map((i: any) => {
+    return {
+      id: i.detail.invoice_number,
+      date: i.detail.invoice_date,
+      currency: i.due_amount.currency_code,
+      amount: i.due_amount.value,
+      viewed: i.detail.viewed_by_recipient,
+      recipient: i.primary_recipients[0].billing_info.email_address
+        .toLowerCase(),
+    };
+  });
+
+  type PlayersOwing = { [key: string]: { amount: number; count: number } };
+
+  const playerOwing: PlayersOwing = {};
+  for (const i of trimmedInvoices) {
+    if (!Object.keys(playerOwing).includes(i.recipient)) {
+      playerOwing[i.recipient] = {
+        amount: 0,
+        count: 0,
+      };
+    }
+    playerOwing[i.recipient].amount += parseFloat(i.amount);
+    playerOwing[i.recipient].count += 1;
+  }
+  return { invoices: trimmedInvoices, summary: playerOwing };
 };

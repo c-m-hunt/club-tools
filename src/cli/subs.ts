@@ -85,18 +85,8 @@ export const chargeSubs = async () => {
 };
 
 export const owedInvoices = async () => {
-  const invoices = await getOwedInvoices();
-  const trimmedInvoices = invoices.map((i: any) => {
-    return {
-      id: i.detail.invoice_number,
-      date: i.detail.invoice_date,
-      currency: i.due_amount.currency_code,
-      amount: i.due_amount.value,
-      viewed: i.detail.viewed_by_recipient,
-      recipient: i.primary_recipients[0].billing_info.email_address
-        .toLowerCase(),
-    };
-  });
+  const { invoices, summary } = await getOwedInvoices();
+
   const tableList = new Table(
     {
       head: ["Invoice ID", "Date", "Curr", "Amount", "Read", "Email"],
@@ -104,23 +94,9 @@ export const owedInvoices = async () => {
     },
   );
   tableList.push(
-    ...trimmedInvoices.reverse().map((i: any) => Object.values(i)),
+    ...invoices.reverse().map((i: any) => Object.values(i)),
   );
   console.log(tableList.toString());
-
-  type PlayersOwing = { [key: string]: { amount: number; count: number } };
-
-  const playerOwing: PlayersOwing = {};
-  for (const i of trimmedInvoices) {
-    if (!Object.keys(playerOwing).includes(i.recipient)) {
-      playerOwing[i.recipient] = {
-        amount: 0,
-        count: 0,
-      };
-    }
-    playerOwing[i.recipient].amount += parseFloat(i.amount);
-    playerOwing[i.recipient].count += 1;
-  }
 
   const tablePlayers = new Table(
     {
@@ -133,19 +109,19 @@ export const owedInvoices = async () => {
     },
   );
   tablePlayers.push(
-    ...Object.keys(playerOwing).map((
+    ...Object.keys(summary).map((
       k,
     ) => ([
       k,
-      playerOwing[k].count,
-      `GBP ${playerOwing[k].amount.toFixed(2)}`,
+      summary[k].count,
+      `GBP ${summary[k].amount.toFixed(2)}`,
     ])),
   );
   console.log(tablePlayers.toString());
 
   console.log(chalk.bold.bgRed.white(
     ` TOTAL OUTSTANDING: GBP ${
-      Object.values(playerOwing).reduce((a, b) => a + b.amount, 0)
+      Object.values(summary).reduce((a, b) => a + b.amount, 0)
     } `,
   ));
 };
