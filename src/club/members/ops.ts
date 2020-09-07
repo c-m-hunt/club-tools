@@ -9,7 +9,6 @@ import {
 import {
   connect,
   disconnect,
-  insertMember,
   updateMembersById,
   updateMembersByPlayCricketId,
 } from "lib/clubDb";
