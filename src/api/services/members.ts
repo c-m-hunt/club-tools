@@ -1,5 +1,4 @@
 import { Router } from "express";
-import { config } from "config";
 import { searchNames } from "lib/clubDb/search";
 
 const router = Router();

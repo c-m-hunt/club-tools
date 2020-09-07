@@ -19,6 +19,20 @@ export const financeListImport = async () => {
   console.log(members);
 };
 
+const selectMemberAction = async (m: Member) => {
+  const answers1 = await inquirer.prompt([
+    {
+      type: "list",
+      name: "select_action",
+      message: "Select an action",
+      choices: [
+        { name: "Change fee band", value: "fee" },
+        { name: "Change email address", value: "email" },
+      ],
+    },
+  ]);
+};
+
 export const searchMembers = async (searchText: string) => {
   connect();
   const members = await searchNames(searchText);
@@ -43,20 +57,6 @@ const displayMember = (m: Member) => {
   console.log(`Name:             ${m.firstName} ${m.lastName}`);
   console.log(`Email:            ${m.email}`);
   console.log(`Play Cricket ID:  ${m.externalMapping?.playCricketId}`);
-};
-
-const selectMemberAction = async (m: Member) => {
-  const answers1 = await inquirer.prompt([
-    {
-      type: "list",
-      name: "select_action",
-      message: "Select an action",
-      choices: [
-        { name: "Change fee band", value: "fee" },
-        { name: "Change email address", value: "email" },
-      ],
-    },
-  ]);
 };
 
 export const insertMember = async () => {

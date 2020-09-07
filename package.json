@@ -10,16 +10,13 @@
     "license": "MIT",
     "scripts": {
         "start": "NODE_PATH=./src ts-node src/app.ts",
-        "start-slack": "NODE_PATH=./src ts-node src/slack.ts",
-        "start-slack-watch": "nodemon",
         "start-server": "NODE_PATH=./src ts-node src/server.ts",
         "start-server-watch": "nodemon",
         "lint": "tsc --noEmit && eslint \"**/*.{js,ts}\" --quiet --fix",
         "test": "jest --forceExit --coverage --verbose",
         "build": "tsc -p ./tsconfig.json",
         "install:ct": "yarn build && cp ct.template ct && pwdesc=$(echo $PWD) && sed -i '' -e \"s|{{path}}|${pwdesc}|g\" ct && mv ct /usr/local/bin",
-        "run:prod": "PRODUCTION=1 node -r ./tsconfig-paths-bootstrap.js dist/app.js",
-        "import-members": "ts-node src/club/members/import.ts"
+        "run:prod": "PRODUCTION=1 node -r ./tsconfig-paths-bootstrap.js dist/app.js"
     },
     "dependencies": {
         "@slack/webhook": "^5.0.3",
