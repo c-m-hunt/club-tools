@@ -1,5 +1,6 @@
 import Table from "cli-table3";
 import inquirer from "inquirer";
+import chalk from "chalk";
 
 import { config } from "config";
 import { connect, disconnect } from "lib/clubDb";
@@ -142,11 +143,11 @@ export const owedInvoices = async () => {
   );
   console.log(tablePlayers.toString());
 
-  console.log(
-    `TOTAL OUTSTANDING: GBP ${
+  console.log(chalk.bold.bgRed.white(
+    ` TOTAL OUTSTANDING: GBP ${
       Object.values(playerOwing).reduce((a, b) => a + b.amount, 0)
-    }`,
-  );
+    } `,
+  ));
 };
 
 export const feeBands = async () => {
