@@ -95,3 +95,8 @@ Will display a list of owed match subs and a summary of how much each member owe
 * Add new members
 * Display all member fee bands
 * Web front end (but need more motivation to do this. CLI works fine for my needs.)
+
+
+## Authentication
+
+https://developer.okta.com/blog/2019/02/14/modern-token-authentication-in-node-with-express
