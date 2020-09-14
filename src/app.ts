@@ -6,6 +6,7 @@ import {
   owedInvoices,
   feeBands,
   addFeeBand,
+  insertMember,
 } from "cli";
 import { searchMembers } from "cli/index";
 import { leagueTables } from "cli/cricket";
@@ -35,6 +36,11 @@ async function main() {
     .command("search <searchText>")
     .description("search for club member and actions")
     .action(searchMembers);
+
+  program
+    .command("insertmember")
+    .description("insert a new club member")
+    .action(insertMember);
 
   program
     .command("subs")

@@ -6,6 +6,7 @@ import { searchNames } from "lib/clubDb/search";
 import inquirer from "inquirer";
 import logger from "logger";
 import { Member } from "lib/clubDb/types";
+import { insertMember as insertMemberIntoDB } from "lib/clubDb";
 
 export * from "./subs";
 
@@ -50,4 +51,66 @@ const selectMemberAction = async (m: Member) => {
       ],
     },
   ]);
+};
+
+export const insertMember = async () => {
+  const answers = await inquirer.prompt([
+    {
+      type: "input",
+      name: "member_first_name",
+      message: "First name",
+      validate: (val) => {
+        if (val.length <= 2) {
+          return "Please enter a name longer than two characters";
+        }
+        return true;
+      },
+    },
+    {
+      type: "input",
+      name: "member_last_name",
+      message: "Last name",
+      validate: (val) => {
+        if (val.length <= 2) {
+          return "Please enter a name longer than two characters";
+        }
+        return true;
+      },
+    },
+    {
+      type: "input",
+      name: "member_email",
+      message: "Email address",
+      validate: (val) => {
+        if (val.length <= 2) {
+          return "Please enter a valid email address";
+        }
+        if (val.indexOf("@") === -1) {
+          return "Please enter a valid email address";
+        }
+        return true;
+      },
+    },
+    {
+      type: "input",
+      name: "member_play_cricket_mapping",
+      message: "Play Cricket ID",
+    },
+  ]);
+
+  const member: Member = {
+    firstName: answers["member_first_name"],
+    lastName: answers["member_last_name"],
+    email: answers["member_email"],
+    externalMapping: {
+      playCricketId: answers["member_play_cricket_mapping"].length > 0
+        ? answers["member_play_cricket_mapping"]
+        : null,
+    },
+    tags: ["player"],
+  };
+  connect();
+  const id = await insertMemberIntoDB(member);
+  disconnect();
+  console.log(`Member inserted with ID ${id}`);
 };
