@@ -34,9 +34,15 @@ export const searchMembers = async (searchText: string) => {
     },
   ]);
   const member = answers1["select_member"];
-  logger.info(`Selected ${member.firstName} ${member.lastName}`);
+  displayMember(member);
   await selectMemberAction(member);
   disconnect();
+};
+
+const displayMember = (m: Member) => {
+  console.log(`Name:             ${m.firstName} ${m.lastName}`);
+  console.log(`Email:            ${m.email}`);
+  console.log(`Play Cricket ID:  ${m.externalMapping?.playCricketId}`);
 };
 
 const selectMemberAction = async (m: Member) => {

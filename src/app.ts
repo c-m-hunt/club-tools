@@ -38,7 +38,7 @@ async function main() {
     .action(searchMembers);
 
   program
-    .command("insertmember")
+    .command("addmember")
     .description("insert a new club member")
     .action(insertMember);
 
