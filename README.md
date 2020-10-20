@@ -93,6 +93,5 @@ Will display a list of owed match subs and a summary of how much each member owe
 
 ## Todo
 * Add new members
-* Move fee bands out of code and in to database
 * Display all member fee bands
 * Web front end (but need more motivation to do this. CLI works fine for my needs.)
