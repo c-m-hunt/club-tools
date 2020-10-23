@@ -6,6 +6,7 @@ import subsRouter from "./services/subs";
 import cricketRouter from "./services/cricket";
 import membersRouter from "./services/members";
 import slackRouter from "./services/slack";
+import adminRouter from "./services/admin";
 import { connect } from "lib/clubDb";
 
 export const setupServer = () => {
@@ -20,6 +21,7 @@ export const setupServer = () => {
   app.use("/cricket", cricketRouter);
   app.use("/members", membersRouter);
   app.use("/slack", slackRouter);
+  app.use("/admin", adminRouter);
 
   app.listen(port, () => {
     console.log(`server started at http://localhost:${port}`);
